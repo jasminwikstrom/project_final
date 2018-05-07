@@ -8,7 +8,6 @@ import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.repository.data.Issue;
 
 import se.javagroup.projecttask.repository.data.Team;
-
 import java.util.List;
 
 import java.util.Optional;
@@ -27,16 +26,13 @@ public final class Service {
         this.userRepository = userRepository;
         this.workItemRepository = workItemRepository;
     }
-    
-    public WorkItem createWorkItem(WorkItem workItem) {
-        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
-    }
-    
-
 
     public WorkItem createWorkItem(WorkItem workItem) {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
+
+
+
     public Team addTeam(Team team){
         return teamRepository.save(team);
     }
