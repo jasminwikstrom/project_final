@@ -17,4 +17,29 @@ public class Team {
 
     protected Team(){}
 
+    public Team(String name, boolean status) {
+        this.name = name;
+        this.status = status;
+        this.users = users;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Long getTeamNumber() {
+        return teamNumber;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public Collection<User> getUsers() {
+        return users;
+    }
 }
