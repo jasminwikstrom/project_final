@@ -5,6 +5,8 @@ import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.WorkItem;
+import se.javagroup.projecttask.repository.data.Issue;
+
 import se.javagroup.projecttask.repository.data.Team;
 
 import java.util.List;
@@ -25,8 +27,7 @@ public final class Service {
         this.userRepository = userRepository;
         this.workItemRepository = workItemRepository;
     }
-
-
+    
     public WorkItem createWorkItem(WorkItem workItem) {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
@@ -43,5 +44,9 @@ public final class Service {
 
     public Optional<WorkItem> getWorkItem(Long id){
         return workItemRepository.findById(id);
+    }
+
+    public Issue createIssue(Issue issue){
+        return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
     }
 }
