@@ -1,6 +1,5 @@
 package se.javagroup.projecttask.service;
 
-import javassist.NotFoundException;
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
@@ -11,7 +10,6 @@ import se.javagroup.projecttask.repository.data.Team;
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.repository.data.WorkItem;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +54,6 @@ public final class Service {
     }
 
 
-
     public User saveUser(User user) {
 
         if (user.getFirstName() == null) {
@@ -73,29 +70,18 @@ public final class Service {
     }
 
 
-
-
-
-
     public User getUser(String id) {
         return userRepository.findById(Long.valueOf(id))
                 .map(User::new)
                 .orElseThrow(() -> new javax.ws.rs.NotFoundException("User with id " + id + " not found"));
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-
-
     public void deleteUser(String userId) {
         userRepository.findById(Long.valueOf(userId)).ifPresent(userRepository::delete);
     }
 
 
-
-    public User updateUser(String id, String firstName)  {
+    public User updateUser(String id, String firstName) {
 
 
         return userRepository.findById(Long.valueOf(id))
@@ -105,6 +91,11 @@ public final class Service {
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
+
+    public List<User> getResult(String firstName, String lastName) {
+        return userRepository.findAllByQuery(firstName, lastName);
+
+    }
 }
 
 

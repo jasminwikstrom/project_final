@@ -1,6 +1,5 @@
 package se.javagroup.projecttask.resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.service.Service;
@@ -12,7 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("users")
+@Path("/users")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -52,16 +51,20 @@ public final class UserResource {
         return service.getUser(id);
     }
 
-    @GET
-    public List<User> getAllUsers() {
-        return service.getAllUsers();
-    }
-
     @PUT
     @Path("{id}")
     public User updateUser(@PathParam("id") String id, String firstName) {
         return service.updateUser(id, firstName);
     }
+
+
+    @GET
+    public List<User> getResult(
+            @QueryParam("firstname") String firstName,
+            @QueryParam("lastname") String lastName) {
+        return service.getResult(firstName, lastName);
+    }
+
 
 }
 
