@@ -12,6 +12,8 @@ import se.javagroup.projecttask.repository.data.Team;
 import java.util.List;
 >>>>>>> Team
 
+import java.util.Optional;
+
 @org.springframework.stereotype.Service
 public final class Service {
 
@@ -40,5 +42,9 @@ public final class Service {
     public Team updateTeam (Team team){
         return teamRepository.save(team);
 >>>>>>> Team
+    }
+
+    public Optional<WorkItem> getWorkItem(Long id){
+        return workItemRepository.findById(id);
     }
 }
