@@ -4,6 +4,7 @@ import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
+import se.javagroup.projecttask.repository.data.WorkItem;
 
 @org.springframework.stereotype.Service
 public final class Service {
@@ -20,4 +21,7 @@ public final class Service {
         this.workItemRepository = workItemRepository;
     }
 
+    public WorkItem createWorkItem(WorkItem workItem) {
+        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
+    }
 }
