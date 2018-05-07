@@ -32,7 +32,10 @@ public final class WorkItemResource {
     @POST
     public Response createUser(WorkItem workItem) {
         WorkItem workItemNew = service.createWorkItem(workItem);
-        URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(workItemNew.getId())).build();
-        return Response.created(location).build();
+        return Response.created(locationOf(workItemNew)).build();
+    }
+
+    private URI locationOf(WorkItem workItem){
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(workItem.getId().toString()).build();
     }
 }
