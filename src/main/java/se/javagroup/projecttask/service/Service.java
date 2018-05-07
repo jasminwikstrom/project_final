@@ -32,6 +32,11 @@ public final class Service {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
     
+
+
+    public WorkItem createWorkItem(WorkItem workItem) {
+        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
+    }
     public Team addTeam(Team team){
         return teamRepository.save(team);
     }
