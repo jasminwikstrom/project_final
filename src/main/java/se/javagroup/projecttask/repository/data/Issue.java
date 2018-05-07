@@ -15,4 +15,25 @@ public class Issue {
     private WorkItem workItem;
 
     protected Issue(){}
+
+    public Issue(String description, WorkItem workItem) {
+        this.description = description;
+        this.workItem = workItem;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Long getIssueNumber() {
+        return issueNumber;
+    }
+
+    public WorkItem getWorkItem() {
+        return workItem;
+    }
 }
