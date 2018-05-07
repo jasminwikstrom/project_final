@@ -6,6 +6,8 @@ import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.WorkItem;
 
+import java.util.Optional;
+
 @org.springframework.stereotype.Service
 public final class Service {
 
@@ -23,5 +25,9 @@ public final class Service {
 
     public WorkItem createWorkItem(WorkItem workItem) {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
+    }
+
+    public Optional<WorkItem> getWorkItem(Long id){
+        return workItemRepository.findById(id);
     }
 }

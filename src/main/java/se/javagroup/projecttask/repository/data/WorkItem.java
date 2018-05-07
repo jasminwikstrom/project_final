@@ -23,7 +23,6 @@ public class WorkItem {
     public WorkItem(String description, WorkItemStatus workItemStatus) {
         this.description = description;
         this.workItemStatus = workItemStatus;
-
     }
 
     public Long getId() {
