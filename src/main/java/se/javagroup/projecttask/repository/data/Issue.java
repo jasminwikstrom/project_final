@@ -36,4 +36,20 @@ public class Issue {
     public WorkItem getWorkItem() {
         return workItem;
     }
+
+    public void setWorkItem(WorkItem workItem) {
+        this.workItem = workItem;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setIssueNumber(Long issueNumber) {
+        this.issueNumber = issueNumber;
+    }
 }

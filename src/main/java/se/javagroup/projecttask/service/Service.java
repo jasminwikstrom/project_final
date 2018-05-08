@@ -55,9 +55,28 @@ public final class Service {
     }
 
     public Issue createIssue(Issue issue) {
+
+    public Optional<Issue> getIssue(Long id){
+        return issueRepository.findById(id);
+    }
+
+    public Issue createIssue(Issue issue){
         return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
     }
 
+    public Issue updateIssue(Long id, Issue issue){
+       return issueRepository.findById(id)
+               .map(i -> {
+                   i.setDescription(issue.getDescription());
+                   i.setWorkItem(issue.getWorkItem());
+                   return issueRepository.save(i);
+               }).orElseThrow(() -> new BadInputException("Issue with id " + id + " was not found"));
+    }
+
+
+    public void deleteIssue(Issue issue) {
+        issueRepository.deleteById(issue.getId());
+    }
 
     public User saveUser(User user) {
 
@@ -99,6 +118,7 @@ public final class Service {
 
     public List<User> getResult(String firstName, String lastName) {
         return userRepository.findAllByQuery(firstName, lastName);
+
 
     }
 }

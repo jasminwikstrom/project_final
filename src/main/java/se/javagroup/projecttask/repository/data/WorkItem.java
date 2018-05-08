@@ -1,6 +1,8 @@
 package se.javagroup.projecttask.repository.data;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
+
 @Entity
 public class WorkItem {
     @Id
@@ -16,6 +18,8 @@ public class WorkItem {
     @ManyToOne()
     private User user;
     @OneToOne
+    @OneToOne(mappedBy = "workItem")
+    @XmlTransient
     private Issue issue;
 
     protected WorkItem(){}
