@@ -32,6 +32,7 @@ public final class UserResource {
         User user = new User();
         user.setFirstName(useradd.getFirstName());
         user.setLastName(useradd.getLastName());
+        user.setTeam(useradd.getTeam());//NYTT från cla
 
         User save = service.saveUser(user);
 
