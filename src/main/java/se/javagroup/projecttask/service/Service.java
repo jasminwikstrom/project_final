@@ -8,7 +8,6 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +53,6 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-
     public Optional<Issue> getIssue(Long id){
         return issueRepository.findById(id);
     }
@@ -89,7 +87,10 @@ public final class Service {
         }
 
 
-        return userRepository.save(user);
+        //return userRepository.save(user);
+        //NYTT från cla
+        return userRepository.save(new User(user.getId(), user.getFirstName(),
+                user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam()));
     }
 
 

@@ -2,8 +2,6 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Team;
-import se.javagroup.projecttask.repository.data.User;
-import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -15,8 +13,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.ws.rs.core.Response.Status.CREATED;
 
 @Path("teams")
 @Component

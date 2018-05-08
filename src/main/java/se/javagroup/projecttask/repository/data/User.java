@@ -22,14 +22,14 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status, Team team) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.userNumber = userNumber;
         this.status = status;
-
+        this.team = team;//NYTT från cla
 
     }
 
