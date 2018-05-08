@@ -1,18 +1,14 @@
 package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
-import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 
 @Path("issues")
 @Component
@@ -29,7 +25,7 @@ public final class IssueResource {
         this.service = service;
     }
 
-    @POST
+   /* @POST
     public Response createIssue(Issue issue) {
         Issue newIssue = service.createIssue(issue);
         return Response.created(locationOf(newIssue)).build();
@@ -37,5 +33,5 @@ public final class IssueResource {
 
     private URI locationOf(Issue issue) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
-    }
+    }*/
 }

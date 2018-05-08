@@ -17,12 +17,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByQuery(@Param("firstname") String firstName,
                               @Param("lastname") String lastName);
 
-    @Query("SELECT * FROM TEAM t.users where t.name := name")
-    List<User> findUsersInTeam(@Param("name") String name);
+   /* @Query("SELECT * FROM TEAM t.users where t.name := name")
+    List<User> findUsersInTeam(@Param("name") String name);*/
 
     User add(User user);
 
     Optional<User> get(Long id);
+
 
     Stream<User> getAll();
 

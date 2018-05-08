@@ -22,8 +22,12 @@ public class User {
     protected User() {
     }
 
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
-        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;

@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static java.util.stream.Collectors.toList;
-
 @org.springframework.stereotype.Service
 public final class Service {
 
@@ -68,16 +66,21 @@ public final class Service {
             throw new BadInputException("Lastname can not be null");
         }
 
-
+        user.getUsername();
         return userRepository.save(user);
     }
 
 
-   /* public User getUser(String id) {
+    public Optional<User> getUser(Long id) {
+        /*
         return userRepository.findById(Long.valueOf(id))
                 .map(User::new)
                 .orElseThrow(() -> new javax.ws.rs.NotFoundException("User with id " + id + " not found"));
-    }*/
+                */
+
+        Optional<User> user = userRepository.findById(id);
+        return userRepository.findById(id);
+    }
 
     public void deleteUser(String userId) {
         userRepository.findById(Long.valueOf(userId)).ifPresent(userRepository::delete);
@@ -98,30 +101,6 @@ public final class Service {
     public List<User> getResult(String firstName, String lastName) {
         return userRepository.findAllByQuery(firstName, lastName);
 
-    }
-
-
-    public User createUser(User user) {
-
-        return userRepository.add(new User(ids.incrementAndGet(),
-                user.getFirstName(), user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus()));
-    }
-
-    public Optional<User> getUser(Long id) {
-        return userRepository.get(id);
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.getAll().collect(toList());
-    }
-
-    public User updateUser(User user) {
-
-        return userRepository.update(user);
-    }
-
-    public Optional<User> deleteCustomer(Long id) {
-        return userRepository.delete(id);
     }
 
 
