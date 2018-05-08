@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.service.Service;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -11,9 +14,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-import static javax.ws.rs.core.Response.Status.*;
 
-@Path("users")
+@Path("/users")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,46 +31,47 @@ public final class UserResource {
     }
 
     @POST
-    @ApiKey
-    public Response createUser(User user) {
-        User result = service.createUser(user);
-        return Response.status(CREATED).header("Location", "customers/" + result.getId()).build();
+    public Response addUser(User useradd) {
+        User user = new User();
+        user.setFirstName(useradd.getFirstName());
+        user.setLastName(useradd.getLastName());
+
+        User save = service.saveUser(user);
+
+        return Response.ok(save).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    public Response deleteUser(@PathParam("id") String id) {
+        service.deleteUser(id);
+        return Response.ok().build();
+    }
 
     @GET
-    public Response getAll() {
-        List<User> users = service.getAllUsers();
+    @Path("/{id}")
+    public User getUser(@PathParam("id") String id) {
 
-
-        return Response.ok(users).build();
+        return service.getUser(id);
     }
 
-    @GET
-    @Path("{id}")
-    public Response getUserr(@PathParam("id") Long id) {
-        return service.getUser(id)
-                .map(Response::ok)
-                .orElse(Response.status(NOT_FOUND))
-                .build();
-    }
-
-    @ApiKey
     @PUT
     @Path("{id}")
-    public void updateUser(@PathParam("id") Long id, User user) {
-        // if (id == customer.getId()) ... else BAD_REQUEST
-        service.updateUser(user);
+    public User updateUser(@PathParam("id") String id, User user) {
+        return service.updateUser(id, user);
     }
 
-    @ApiKey
-    @DELETE
-    @Path("{id}")
-    public Response deleteUser(@PathParam("id") Long id) {
-        return service.deleteCustomer(id)
-                .map(c -> Response.status(NO_CONTENT))
-                .orElse(Response.status(NOT_FOUND))
-                .build();
+
+    @GET
+    public List<User> getResult(
+            @QueryParam("firstname") String firstName,
+            @QueryParam("lastname") String lastName) {
+        return service.getResult(firstName, lastName);
     }
+
 
 }
+
+
+
+
