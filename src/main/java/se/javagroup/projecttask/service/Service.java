@@ -54,7 +54,6 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-    public Issue createIssue(Issue issue) {
 
     public Optional<Issue> getIssue(Long id){
         return issueRepository.findById(id);

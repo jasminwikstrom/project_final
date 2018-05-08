@@ -17,7 +17,6 @@ public class WorkItem {
     private Long workItemNumber;
     @ManyToOne()
     private User user;
-    @OneToOne
     @OneToOne(mappedBy = "workItem")
     @XmlTransient
     private Issue issue;
