@@ -11,11 +11,12 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String username;
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userNumber;
     private boolean status;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Team team;
     //@JsonManagedReference behövs ev.
 

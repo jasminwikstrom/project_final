@@ -13,7 +13,7 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long teamNumber;
     private boolean status;
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     @XmlTransient//För att de ej ska bli proxy
     private Collection<User> users;
 

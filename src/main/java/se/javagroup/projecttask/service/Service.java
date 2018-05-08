@@ -1,19 +1,20 @@
 package se.javagroup.projecttask.service;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public final class Service {
+public class Service {
 
     private final IssueRepository issueRepository;
     private final TeamRepository teamRepository;
@@ -28,7 +29,7 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
-        if(workItem.getWorkItemStatus() == null){
+        if (workItem.getWorkItemStatus() == null) {
             return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
@@ -58,7 +59,7 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-    public Optional<Issue> getIssue(Long id){
+    public Optional<Issue> getIssue(Long id) {
 
         return issueRepository.findById(id);
     }
@@ -93,22 +94,23 @@ public final class Service {
         issueRepository.deleteById(issue.getId());
     }
 
+    @Transactional
     public User saveUser(User user) {
 
         if (user.getFirstName() == null) {
             throw new BadInputException("Firstname can not be null");
-
         }
 
         if (user.getLastName() == null) {
             throw new BadInputException("Lastname can not be null");
         }
-
+        if (user.getUsername() == null) {
+            throw new BadInputException("Username can not be null");
+        }
 
         //return userRepository.save(user);
         //NYTT från cla
-        return userRepository.save(new User(user.getId(), user.getFirstName(),
-                user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam()));
+        return userRepository.save(user);
     }
 
 
@@ -134,8 +136,8 @@ public final class Service {
     }
 
 
-    public List<User> getResult(String firstName, String lastName) {
-        return userRepository.findAllByQuery(firstName, lastName);
+    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
 
 
     }
@@ -143,18 +145,18 @@ public final class Service {
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
-        if(status == null && !issue && text == null) {//returerar all workItems
+        if (status == null && !issue && text == null) {//returerar all workItems
             return workItems;
         }
-        if(issue){ //sorterar listan att endast innehålla workitems med issues
+        if (issue) { //sorterar listan att endast innehålla workitems med issues
             workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
         }
-        if(status!= null) { // filtrerar listan efter inmatad status
+        if (status != null) { // filtrerar listan efter inmatad status
 
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
         }
-        if(text != null){ //sorterar listan efter innehhåll av text
-           workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
+        if (text != null) { //sorterar listan efter innehhåll av text
+            workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
     }
