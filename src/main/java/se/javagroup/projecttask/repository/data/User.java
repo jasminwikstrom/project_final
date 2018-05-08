@@ -19,7 +19,6 @@ public class User {
     private Team team;
     //@JsonManagedReference behövs ev.
 
-    protected User(){}
     public User() {
     }
 

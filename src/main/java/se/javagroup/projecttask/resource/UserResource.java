@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("users")
+
 @Path("/users")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
