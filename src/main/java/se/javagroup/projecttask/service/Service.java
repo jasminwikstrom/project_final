@@ -58,12 +58,8 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-<<<<<<< HEAD
-
-    public Optional<Issue> getIssue(Long id) {
-=======
     public Optional<Issue> getIssue(Long id){
->>>>>>> origin/NyTeam
+
         return issueRepository.findById(id);
     }
 
@@ -109,7 +105,6 @@ public final class Service {
         }
 
 
-        return userRepository.save(user);
         //return userRepository.save(user);
         //NYTT från cla
         return userRepository.save(new User(user.getId(), user.getFirstName(),
