@@ -103,5 +103,13 @@ public final class Service {
 
     }
 
+    public String validateUserLength(String username) {
+        if (!(username.length() < 10))
+            return "valid";
+        else
+            return "username should be 10 characters or longer";
+
+    }
+
 
 }
