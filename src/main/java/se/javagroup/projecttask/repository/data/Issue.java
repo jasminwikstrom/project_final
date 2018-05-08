@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +13,8 @@ public class Issue {
     private String description;
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long issueNumber;
-    @OneToOne
+    @OneToOne()
+    @JsonBackReference
     private WorkItem workItem;
 
     protected Issue(){}

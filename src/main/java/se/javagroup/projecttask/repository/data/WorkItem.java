@@ -1,5 +1,8 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 @Entity
 public class WorkItem {
@@ -15,7 +18,8 @@ public class WorkItem {
     private Long workItemNumber;
     @ManyToOne()
     private User user;
-    @OneToOne
+    @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Issue issue;
 
     protected WorkItem(){}
