@@ -41,13 +41,9 @@ public final class WorkItemResource {
     }
 
     @GET
-<<<<<<< HEAD
-    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue) {
-        return Response.ok(service.getAllWorkItems(status, issue)).build();
-=======
     public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
->>>>>>> master
+
     }
 
     private URI locationOf(WorkItem workItem) {

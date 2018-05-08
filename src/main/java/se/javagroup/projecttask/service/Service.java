@@ -28,14 +28,11 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
-<<<<<<< HEAD
-        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), workItem.getWorkItemStatus()));
-=======
         if(workItem.getWorkItemStatus() == null){
             return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
->>>>>>> master
+
     }
 
 
@@ -74,7 +71,6 @@ public final class Service {
                 Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem())));
                 oldWorkItem.setIssue(newIssue.get());
                 workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
-                //workItemRepository.save(new WorkItem(oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
 
                 return newIssue;
 
@@ -141,16 +137,7 @@ public final class Service {
 
     }
 
-<<<<<<< HEAD
-    public List<WorkItem> getAllWorkItems(String status, boolean issue) {
-        List<WorkItem> workItems = workItemRepository.findAll();
-        if (status == null && !issue) {
-            return workItems; //returerar all workItems
-        } else if (issue) { //returnerar alla med issues
-            workItems = getWorkItemsWithIssues(workItems);
-        }
-        if (status != null) {
-=======
+
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
         if(status == null && !issue && text == null) {//returerar all workItems
@@ -160,7 +147,7 @@ public final class Service {
             workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
         }
         if(status!= null) { // filtrerar listan efter inmatad status
->>>>>>> master
+
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
         }
         if(text != null){ //sorterar listan efter innehhåll av text
@@ -168,21 +155,7 @@ public final class Service {
         }
         return workItems;
     }
-<<<<<<< HEAD
 
-
-    private List<WorkItem> getWorkItemsWithIssues(List<WorkItem> workItems) {
-        List<WorkItem> withIssues = new ArrayList<>();
-        for (WorkItem w : workItems) {
-            if (w.getIssue() != null) {
-                withIssues.add(w);
-            }
-        }
-        return withIssues;
-    }
-=======
-
->>>>>>> master
 }
 
 
