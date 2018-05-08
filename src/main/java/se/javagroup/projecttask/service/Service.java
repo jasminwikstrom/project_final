@@ -5,15 +5,10 @@ import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
-import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.repository.data.Issue;
-
 import se.javagroup.projecttask.repository.data.Team;
-<<<<<<< HEAD
-=======
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.repository.data.WorkItem;
->>>>>>> master
 
 import java.util.List;
 import java.util.Optional;
@@ -37,42 +32,28 @@ public final class Service {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
 
-<<<<<<< HEAD
+
     public Team createTeam(Team team){
         return teamRepository.save(new Team(team.getName(), team.isStatus(), team.getTeamNumber()));
     }
     public Iterable<Team> getAllTeams(){
         return teamRepository.findAll();
-    }/*
-    public Team updateTeam(Long id, String name, boolean status, Long teamNumber){
-        return teamRepository.findById(Long.valueOf(id)).map(team -> {
-            team.setName(String.valueOf(name));
-            team.setStatus(status);
-            team.setTeamNumber(Long.valueOf(teamNumber));
-            return teamRepository.save(team);
+    }
+
+    public Team updateTeam(String id, Team team){
+        return teamRepository.findById(Long.valueOf(id))
+                .map(t -> {
+            t.setName(team.getName());
+            t.setStatus(team.isStatus());
+            t.setTeamNumber(team.getTeamNumber());
+            return teamRepository.save(t);
         }).orElseThrow(() -> new BadInputException("Team with id " + id + " was not found"));
-    }*/
-    public Optional<WorkItem> getWorkItem(Long id){
-=======
-
-    public Team addTeam(Team team) {
-        return teamRepository.save(team);
-    }
-
-    public List<Team> getAllTeams() {
-        return teamRepository.getAllTeams();
-    }
-
-    public Team updateTeam(Team team) {
-        return teamRepository.save(team);
     }
 
     public Optional<WorkItem> getWorkItem(Long id) {
->>>>>>> master
         return workItemRepository.findById(id);
     }
 
-    public Issue createIssue(Issue issue){
     public Issue createIssue(Issue issue) {
         return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
     }
@@ -105,13 +86,13 @@ public final class Service {
     }
 
 
-    public User updateUser(String id, String firstName) {
+    public User updateUser(String id, User user) {
 
 
         return userRepository.findById(Long.valueOf(id))
-                .map(user -> {
-                    user.setFirstName(String.valueOf(firstName));
-                    return userRepository.save(user);
+                .map(u -> {
+                    u.setFirstName(user.getFirstName());
+                    return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
