@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-import static javax.ws.rs.core.Response.Status.FOUND;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("workitems")
@@ -37,16 +36,16 @@ public final class WorkItemResource {
 
     @GET
     @Path("{id}")
-    public Response getWorkItem( @PathParam("id") Long id){
+    public Response getWorkItem(@PathParam("id") Long id) {
         return service.getWorkItem(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
     @GET
-    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue){
-       return Response.ok(service.getAllWorkItems(status, issue)).build();
+    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue) {
+        return Response.ok(service.getAllWorkItems(status, issue)).build();
     }
 
-    private URI locationOf(WorkItem workItem){
+    private URI locationOf(WorkItem workItem) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(workItem.getId().toString()).build();
     }
 }
