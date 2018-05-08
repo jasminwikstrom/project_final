@@ -28,7 +28,14 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
+<<<<<<< HEAD
         return workItemRepository.save(new WorkItem(null, workItem.getDescription(), workItem.getWorkItemStatus()));
+=======
+        if(workItem.getWorkItemStatus() == null){
+            return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
+        }
+        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
+>>>>>>> master
     }
 
 
@@ -134,6 +141,7 @@ public final class Service {
 
     }
 
+<<<<<<< HEAD
     public List<WorkItem> getAllWorkItems(String status, boolean issue) {
         List<WorkItem> workItems = workItemRepository.findAll();
         if (status == null && !issue) {
@@ -142,10 +150,25 @@ public final class Service {
             workItems = getWorkItemsWithIssues(workItems);
         }
         if (status != null) {
+=======
+    public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
+        List<WorkItem> workItems = workItemRepository.findAll();
+        if(status == null && !issue && text == null) {//returerar all workItems
+            return workItems;
+        }
+        if(issue){ //sorterar listan att endast innehålla workitems med issues
+            workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
+        }
+        if(status!= null) { // filtrerar listan efter inmatad status
+>>>>>>> master
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
+        }
+        if(text != null){ //sorterar listan efter innehhåll av text
+           workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
     }
+<<<<<<< HEAD
 
 
     private List<WorkItem> getWorkItemsWithIssues(List<WorkItem> workItems) {
@@ -157,6 +180,9 @@ public final class Service {
         }
         return withIssues;
     }
+=======
+
+>>>>>>> master
 }
 
 
