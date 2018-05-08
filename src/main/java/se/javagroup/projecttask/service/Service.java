@@ -44,7 +44,25 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
+    public Optional<Issue> getIssue(Long id){
+        return issueRepository.findById(id);
+    }
+
     public Issue createIssue(Issue issue){
         return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
+    }
+
+    public Issue updateIssue(String id, String description, WorkItem workItem){
+       return issueRepository.findById(Long.valueOf(id))
+               .map(i -> {
+                   i.setDescription(String.valueOf(description));
+                   i.setWorkItem(workItem);
+                   return issueRepository.save(i);
+               }).orElseThrow(() -> new BadInputException("Issue with id " + id + " was not found"));
+    }
+
+
+    public void deleteIssue(Issue issue) {
+        issueRepository.deleteById(issue.getId());
     }
 }
