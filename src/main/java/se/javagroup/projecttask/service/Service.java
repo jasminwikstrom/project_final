@@ -5,13 +5,13 @@ import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
-import se.javagroup.projecttask.repository.data.Issue;
-import se.javagroup.projecttask.repository.data.Team;
-import se.javagroup.projecttask.repository.data.User;
-import se.javagroup.projecttask.repository.data.WorkItem;
+import se.javagroup.projecttask.repository.data.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public final class Service {
@@ -119,6 +119,30 @@ public final class Service {
         return userRepository.findAllByQuery(firstName, lastName);
 
 
+    }
+
+    public List<WorkItem> getAllWorkItems(String status, boolean issue) {
+       List<WorkItem> workItems = workItemRepository.findAll();
+        if(status == null && !issue) {
+            return workItems; //returerar all workItems
+        } else if(issue){ //returnerar alla med issues
+            workItems = getWorkItemsWithIssues(workItems);
+        }
+        if(status!= null) {
+            workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
+        }
+        return workItems;
+    }
+    
+
+    private List<WorkItem> getWorkItemsWithIssues(List<WorkItem> workItems) {
+        List<WorkItem> withIssues = new ArrayList<>();
+        for(WorkItem w: workItems){
+            if(w.getIssue() != null){
+                withIssues.add(w);
+            }
+        }
+       return withIssues;
     }
 }
 
