@@ -4,15 +4,16 @@ import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.service.Service;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Optional;
+
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
 @Path("issues")
 @Component
@@ -30,12 +31,33 @@ public final class IssueResource {
     }
 
     @POST
-    public Response createIssue(Issue issue){
-        Issue newIssue = service.createIssue(issue);
-        return Response.created(locationOf(newIssue)).build();
+    public Response createIssue(Issue issue) {
+        Optional<Issue> newIssue = service.createIssue(issue, issue.getWorkItem().getId());
+        return Response.created(locationOf(newIssue.get())).build();
     }
 
-    private URI locationOf(Issue issue){
+    @GET
+    @Path("{id}")
+    public Response getIssue(@PathParam("id") Long id) {
+        return service.getIssue(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    public Issue updateIssue(@PathParam("id") Long id, Issue issue) {
+        return service.updateIssue(id, issue);
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteIssue(@PathParam("id") Long id) {
+        Optional<Issue> issue = service.getIssue(id);
+        issue.ifPresent(i -> service.deleteIssue(i));
+        return issue.map(i -> Response.status(NO_CONTENT)).orElse(Response.status(NOT_FOUND)).build();
+    }
+
+
+    private URI locationOf(Issue issue) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
     }
 }

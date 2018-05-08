@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import se.javagroup.projecttask.repository.data.User;
 
- import java.util.List;
+import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

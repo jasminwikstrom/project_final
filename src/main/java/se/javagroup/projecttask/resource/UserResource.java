@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
+
 @Path("/users")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,6 +32,7 @@ public final class UserResource {
         User user = new User();
         user.setFirstName(useradd.getFirstName());
         user.setLastName(useradd.getLastName());
+        user.setTeam(useradd.getTeam());//NYTT från cla
 
         User save = service.saveUser(user);
 
@@ -53,8 +55,8 @@ public final class UserResource {
 
     @PUT
     @Path("{id}")
-    public User updateUser(@PathParam("id") String id, String firstName) {
-        return service.updateUser(id, firstName);
+    public User updateUser(@PathParam("id") String id, User user) {
+        return service.updateUser(id, user);
     }
 
 

@@ -1,6 +1,9 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+
 @Entity
 public class WorkItem {
     @Id
@@ -15,10 +18,19 @@ public class WorkItem {
     private Long workItemNumber;
     @ManyToOne()
     private User user;
-    @OneToOne
+    //@XmlTransient
+    @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Issue issue;
 
-    protected WorkItem(){}
+    protected WorkItem() {
+    }
+
+    public WorkItem(Long id, String description, WorkItemStatus workItemStatus) {
+        this.id = id;
+        this.description = description;
+        this.workItemStatus = workItemStatus;
+    }
 
     public WorkItem(String description, WorkItemStatus workItemStatus) {
         this.description = description;
@@ -47,5 +59,9 @@ public class WorkItem {
 
     public Issue getIssue() {
         return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
     }
 }

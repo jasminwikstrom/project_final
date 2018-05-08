@@ -9,10 +9,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-
-import static javax.ws.rs.core.Response.Status.CREATED;
 
 @Path("teams")
 @Component
@@ -30,13 +29,28 @@ public final class TeamResource {
 
     @POST
     public Response createTeam(Team team) {
-        Team newTeam = new Team(team.getName(), team.isStatus());
-        service.addTeam(newTeam);
+        Team newTeam = new Team(team.getName(), team.isStatus(), team.getTeamNumber());
+        //service.createTeam(newTeam);
+        return Response.created(locationOf(service.createTeam(newTeam))).build();
+    }
 
-        return Response.status(CREATED).header("Location", "todos/").build();
+    @PUT
+    @Path("{id}")
+    public Team updateTeam(@PathParam("id") String id, Team team) {
+        return service.updateTeam(id, team);
     }
+
     @GET
-    public List<Team> getAll(){
-        return service.getAllTeams();
+    public Response getAll() {
+        List<Team> teams = new ArrayList<>();
+        for (Team t : service.getAllTeams()) {
+            teams.add(t);
+        }
+        return Response.ok(teams).build();
     }
+
+    private URI locationOf(Team team) {
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
+    }
+
 }
