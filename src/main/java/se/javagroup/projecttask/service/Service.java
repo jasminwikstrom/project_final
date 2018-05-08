@@ -29,6 +29,9 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
+        if(workItem.getWorkItemStatus() == null){
+            return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
+        }
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
 
@@ -121,29 +124,23 @@ public final class Service {
 
     }
 
-    public List<WorkItem> getAllWorkItems(String status, boolean issue) {
-       List<WorkItem> workItems = workItemRepository.findAll();
-        if(status == null && !issue) {
-            return workItems; //returerar all workItems
-        } else if(issue){ //returnerar alla med issues
-            workItems = getWorkItemsWithIssues(workItems);
+    public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
+        List<WorkItem> workItems = workItemRepository.findAll();
+        if(status == null && !issue && text == null) {//returerar all workItems
+            return workItems;
         }
-        if(status!= null) {
+        if(issue){ //sorterar listan att endast innehålla workitems med issues
+            workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
+        }
+        if(status!= null) { // filtrerar listan efter inmatad status
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
+        }
+        if(text != null){ //sorterar listan efter innehhåll av text
+           workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
     }
-    
 
-    private List<WorkItem> getWorkItemsWithIssues(List<WorkItem> workItems) {
-        List<WorkItem> withIssues = new ArrayList<>();
-        for(WorkItem w: workItems){
-            if(w.getIssue() != null){
-                withIssues.add(w);
-            }
-        }
-       return withIssues;
-    }
 }
 
 
