@@ -8,7 +8,6 @@ import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.repository.data.Issue;
 
 import se.javagroup.projecttask.repository.data.Team;
-import java.util.List;
 
 import java.util.Optional;
 
@@ -31,17 +30,20 @@ public final class Service {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
 
-
-    public Team addTeam(Team team){
-        return teamRepository.save(team);
+    public Team createTeam(Team team){
+        return teamRepository.save(new Team(team.getName(), team.isStatus(), team.getTeamNumber()));
     }
-    public List<Team> getAllTeams(){
-        return teamRepository.getAllTeams();
-    }
-    public Team updateTeam (Team team){
-        return teamRepository.save(team);
-    }
-
+    public Iterable<Team> getAllTeams(){
+        return teamRepository.findAll();
+    }/*
+    public Team updateTeam(Long id, String name, boolean status, Long teamNumber){
+        return teamRepository.findById(Long.valueOf(id)).map(team -> {
+            team.setName(String.valueOf(name));
+            team.setStatus(status);
+            team.setTeamNumber(Long.valueOf(teamNumber));
+            return teamRepository.save(team);
+        }).orElseThrow(() -> new BadInputException("Team with id " + id + " was not found"));
+    }*/
     public Optional<WorkItem> getWorkItem(Long id){
         return workItemRepository.findById(id);
     }

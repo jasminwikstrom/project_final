@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.ws.rs.core.Response.Status.CREATED;
@@ -30,13 +31,22 @@ public final class TeamResource {
 
     @POST
     public Response createTeam(Team team) {
-        Team newTeam = new Team(team.getName(), team.isStatus());
-        service.addTeam(newTeam);
-
-        return Response.status(CREATED).header("Location", "todos/").build();
+        Team newTeam = new Team(team.getName(), team.isStatus(), team.getTeamNumber());
+        service.createTeam(newTeam);
+        return Response.status(CREATED).header("Location", "teams/" + newTeam.getId()).build();
     }
+    /*
+    @PUT
+    @Path("{id}")
+    public Team updateTeam(@PathParam("id")Long id, String name, boolean status, Long teamNumber) {
+        return service.updateTeam(id, name, status, teamNumber);
+    }*/
     @GET
-    public List<Team> getAll(){
-        return service.getAllTeams();
+    public Response getAll(){
+        List<Team> teams = new ArrayList<>();
+        for(Team t : service.getAllTeams()) {
+            teams.add(t);
+        }
+        return Response.ok(teams).build();
     }
 }
