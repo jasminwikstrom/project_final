@@ -42,7 +42,7 @@ public final class WorkItemResource {
     }
 
     @GET
-    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("text") String text){
+    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
     }
 
