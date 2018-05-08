@@ -5,7 +5,6 @@ import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
-import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.repository.data.Team;
 import se.javagroup.projecttask.repository.data.User;
@@ -14,7 +13,6 @@ import se.javagroup.projecttask.repository.data.WorkItem;
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Service
 @Component
 public final class Service {
 
@@ -30,33 +28,28 @@ public final class Service {
         this.workItemRepository = workItemRepository;
     }
 
-
     public WorkItem createWorkItem(WorkItem workItem) {
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
     }
 
-    public Team addTeam(Team team){
 
     public Team addTeam(Team team) {
         return teamRepository.save(team);
     }
-    public List<Team> getAllTeams(){
 
     public List<Team> getAllTeams() {
         return teamRepository.getAllTeams();
     }
-    public Team updateTeam (Team team){
 
     public Team updateTeam(Team team) {
         return teamRepository.save(team);
     }
 
-    public Optional<WorkItem> getWorkItem(Long id){
     public Optional<WorkItem> getWorkItem(Long id) {
         return workItemRepository.findById(id);
     }
 
-<<<<<<< HEAD
+
     public Optional<Issue> getIssue(Long id){
         return issueRepository.findById(id);
     }
@@ -65,11 +58,11 @@ public final class Service {
         return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
     }
 
-    public Issue updateIssue(String id, String description, WorkItem workItem){
-       return issueRepository.findById(Long.valueOf(id))
+    public Issue updateIssue(Long id, Issue issue){
+       return issueRepository.findById(id)
                .map(i -> {
-                   i.setDescription(String.valueOf(description));
-                   i.setWorkItem(workItem);
+                   i.setDescription(issue.getDescription());
+                   i.setWorkItem(issue.getWorkItem());
                    return issueRepository.save(i);
                }).orElseThrow(() -> new BadInputException("Issue with id " + id + " was not found"));
     }
@@ -77,11 +70,7 @@ public final class Service {
 
     public void deleteIssue(Issue issue) {
         issueRepository.deleteById(issue.getId());
-=======
-    public Issue createIssue(Issue issue) {
-        return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
     }
-
 
     public User saveUser(User user) {
 
@@ -110,13 +99,13 @@ public final class Service {
     }
 
 
-    public User updateUser(String id, String firstName) {
+    public User updateUser(String id, User user) {
 
 
         return userRepository.findById(Long.valueOf(id))
-                .map(user -> {
-                    user.setFirstName(String.valueOf(firstName));
-                    return userRepository.save(user);
+                .map(u -> {
+                    u.setFirstName(user.getFirstName());
+                    return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
@@ -124,7 +113,7 @@ public final class Service {
     public List<User> getResult(String firstName, String lastName) {
         return userRepository.findAllByQuery(firstName, lastName);
 
->>>>>>> master
+
     }
 }
 

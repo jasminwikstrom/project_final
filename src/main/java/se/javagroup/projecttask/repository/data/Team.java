@@ -1,6 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.Collection;
 
 @Entity

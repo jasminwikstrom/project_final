@@ -43,11 +43,11 @@ public final class IssueResource {
         return service.getIssue(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
-  /*  @PUT
+    @PUT
     @Path("{id}")
-    public Issue updateIssue(@PathParam("id") String id, String description, WorkItem workitem) {
-        return service.updateIssue(id, description, workitem);
-    }*/
+    public Issue updateIssue(@PathParam("id") Long id, Issue issue) {
+        return service.updateIssue(id, issue);
+    }
 
     @DELETE
     @Path("{id}")
