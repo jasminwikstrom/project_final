@@ -23,12 +23,15 @@ public class WorkItem {
     @JsonManagedReference
     private Issue issue;
 
-    protected WorkItem(){}
+    protected WorkItem() {
+    }
 
-    public WorkItem(String description, WorkItemStatus workItemStatus) {
+    public WorkItem(Long id, String description, WorkItemStatus workItemStatus) {
+        this.id = id;
         this.description = description;
         this.workItemStatus = workItemStatus;
     }
+
 
     public Long getId() {
         return id;
@@ -52,5 +55,9 @@ public class WorkItem {
 
     public Issue getIssue() {
         return issue;
+    }
+
+    public void setIssue(Issue issue) {
+        this.issue = issue;
     }
 }

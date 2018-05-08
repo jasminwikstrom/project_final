@@ -2,7 +2,6 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Issue;
-import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -32,14 +31,14 @@ public final class IssueResource {
     }
 
     @POST
-    public Response createIssue(Issue issue){
-        Issue newIssue = service.createIssue(issue);
-        return Response.created(locationOf(newIssue)).build();
+    public Response createIssue(Issue issue) {
+        Optional<Issue> newIssue = service.createIssue(issue, issue.getWorkItem().getId());
+        return Response.created(locationOf(newIssue.get())).build();
     }
 
     @GET
     @Path("{id}")
-    public Response getIssue(@PathParam("id") Long id){
+    public Response getIssue(@PathParam("id") Long id) {
         return service.getIssue(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
@@ -58,7 +57,7 @@ public final class IssueResource {
     }
 
 
-    private URI locationOf(Issue issue){
+    private URI locationOf(Issue issue) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
     }
 }

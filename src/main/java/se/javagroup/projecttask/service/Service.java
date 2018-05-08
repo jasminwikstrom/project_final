@@ -8,7 +8,6 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,25 +28,26 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
-        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
+        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), workItem.getWorkItemStatus()));
     }
 
 
-    public Team createTeam(Team team){
+    public Team createTeam(Team team) {
         return teamRepository.save(new Team(team.getName(), team.isStatus(), team.getTeamNumber()));
     }
-    public Iterable<Team> getAllTeams(){
+
+    public Iterable<Team> getAllTeams() {
         return teamRepository.findAll();
     }
 
-    public Team updateTeam(String id, Team team){
+    public Team updateTeam(String id, Team team) {
         return teamRepository.findById(Long.valueOf(id))
                 .map(t -> {
-            t.setName(team.getName());
-            t.setStatus(team.isStatus());
-            t.setTeamNumber(team.getTeamNumber());
-            return teamRepository.save(t);
-        }).orElseThrow(() -> new BadInputException("Team with id " + id + " was not found"));
+                    t.setName(team.getName());
+                    t.setStatus(team.isStatus());
+                    t.setTeamNumber(team.getTeamNumber());
+                    return teamRepository.save(t);
+                }).orElseThrow(() -> new BadInputException("Team with id " + id + " was not found"));
     }
 
     public Optional<WorkItem> getWorkItem(Long id) {
@@ -55,21 +55,34 @@ public final class Service {
     }
 
 
-    public Optional<Issue> getIssue(Long id){
+    public Optional<Issue> getIssue(Long id) {
         return issueRepository.findById(id);
     }
 
-    public Issue createIssue(Issue issue){
-        return issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem()));
+    public Optional<Issue> createIssue(Issue issue, Long workItemID) {
+        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemID);
+        if (workItemOptional.isPresent()) {
+            WorkItem oldWorkItem = workItemOptional.get();
+            if (oldWorkItem.getWorkItemStatus().toString().equals("DONE")) {
+                Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem())));
+                oldWorkItem.setIssue(newIssue.get());
+                workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
+                //workItemRepository.save(new WorkItem(oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
+
+                return newIssue;
+
+            }
+        }
+        throw new BadInputException("Kaos");
     }
 
-    public Issue updateIssue(Long id, Issue issue){
-       return issueRepository.findById(id)
-               .map(i -> {
-                   i.setDescription(issue.getDescription());
-                   i.setWorkItem(issue.getWorkItem());
-                   return issueRepository.save(i);
-               }).orElseThrow(() -> new BadInputException("Issue with id " + id + " was not found"));
+    public Issue updateIssue(Long id, Issue issue) {
+        return issueRepository.findById(id)
+                .map(i -> {
+                    i.setDescription(issue.getDescription());
+                    i.setWorkItem(issue.getWorkItem());
+                    return issueRepository.save(i);
+                }).orElseThrow(() -> new BadInputException("Issue with id " + id + " was not found"));
     }
 
 
@@ -122,27 +135,27 @@ public final class Service {
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue) {
-       List<WorkItem> workItems = workItemRepository.findAll();
-        if(status == null && !issue) {
+        List<WorkItem> workItems = workItemRepository.findAll();
+        if (status == null && !issue) {
             return workItems; //returerar all workItems
-        } else if(issue){ //returnerar alla med issues
+        } else if (issue) { //returnerar alla med issues
             workItems = getWorkItemsWithIssues(workItems);
         }
-        if(status!= null) {
+        if (status != null) {
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
         }
         return workItems;
     }
-    
+
 
     private List<WorkItem> getWorkItemsWithIssues(List<WorkItem> workItems) {
         List<WorkItem> withIssues = new ArrayList<>();
-        for(WorkItem w: workItems){
-            if(w.getIssue() != null){
+        for (WorkItem w : workItems) {
+            if (w.getIssue() != null) {
                 withIssues.add(w);
             }
         }
-       return withIssues;
+        return withIssues;
     }
 }
 
