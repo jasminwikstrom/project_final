@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +18,7 @@ public class User {
     private Long userNumber;
     private boolean status;
     @ManyToOne
+    @JsonBackReference
     private Team team;
     //@JsonManagedReference behövs ev.
 

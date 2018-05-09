@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.Collection;
@@ -13,8 +15,8 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long teamNumber;
     private boolean status;
-    @OneToMany(mappedBy = "team")
-    @XmlTransient//För att de ej ska bli proxy
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Collection<User> users;
 
     protected Team() {
