@@ -7,8 +7,9 @@ import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
+import se.javagroup.projecttask.service.exception.BadInputException;
+import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +36,27 @@ public final class Service {
         }
         return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
 
+    }
+
+    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
+        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(workItemOptional.isPresent()){
+            WorkItem workItem = workItemOptional.get();
+            if(userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))){
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else if(userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+            }
+            return workItem;
+        }
+        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
     }
 
 

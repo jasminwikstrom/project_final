@@ -26,16 +26,24 @@ public class WorkItem {
     protected WorkItem() {
     }
 
+    public WorkItem(String description, WorkItemStatus workItemStatus) {
+        this.description = description;
+        this.workItemStatus = workItemStatus;
+    }
+
     public WorkItem(Long id, String description, WorkItemStatus workItemStatus) {
         this.id = id;
         this.description = description;
         this.workItemStatus = workItemStatus;
     }
 
-    public WorkItem(String description, WorkItemStatus workItemStatus) {
+    public WorkItem(Long id, String description, WorkItemStatus workItemStatus, User user) {
+        this.id = id;
         this.description = description;
         this.workItemStatus = workItemStatus;
+        this.user = user;
     }
+
 
     public Long getId() {
         return id;
@@ -63,5 +71,9 @@ public class WorkItem {
 
     public void setIssue(Issue issue) {
         this.issue = issue;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
