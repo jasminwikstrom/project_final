@@ -41,6 +41,7 @@ public final class UserResource {
         return Response.created(locationOf(service.saveUser(newUser))).build();
 */
         return Response.created(locationOf(service.saveUser(user))).build();
+
     }
 
     @DELETE

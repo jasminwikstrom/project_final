@@ -1,21 +1,19 @@
 package se.javagroup.projecttask.service;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
-import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -26,7 +24,7 @@ public final class Service {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
-    private static final AtomicInteger usernumbers = new AtomicInteger(100);
+    private static final AtomicLong usernumbers = new AtomicLong(100);
 
     public Service(IssueRepository issueRepository, TeamRepository teamRepository, UserRepository userRepository, WorkItemRepository workItemRepository) {
         this.issueRepository = issueRepository;
@@ -138,11 +136,20 @@ public final class Service {
             throw new BadInputException("Lastname can not be null");
         }
 
-
-        // skulle kunna validera username här också
-
         if (user.getUsername() == null) {
             throw new BadInputException("Username can not be null");
+        }
+
+        if (validateUsernameLength(user.getUsername()).equals("valid")) ;
+
+        Long usernumber = randomizedUserNumber();
+        boolean numberexists = checkUserNumber(usernumber);
+        while (numberexists == true) {
+            usernumber = randomizedUserNumber();
+            numberexists = checkUserNumber(usernumber);
+        }
+        if (numberexists == false) {
+            user.setUserNumber(usernumber);
         }
 
 
@@ -210,16 +217,25 @@ public final class Service {
 
     }
 
-    public Integer autogenerateUserNumber(){  // kanske borde användas när vi save new User i stället för att user.getUserNumber
-        return usernumbers.getAndIncrement();
+    public Long randomizedUserNumber() {
+        Random random = new Random();
+        int randomI = random.nextInt(1000);
+        Long randomII = Long.valueOf(randomI);
+        return randomII;
     }
 
-    public boolean checkUserNumber(int usernumber) {  // använd autogenerateUserNumber tillsammans med detta
+    public boolean checkUserNumber(Long usernumber) {  // använd autogenerateUserNumber tillsammans med detta
         List<User> users = userRepository.findAll();
-        boolean exists = false;
+        List<Long> numbers = new ArrayList<>();
+        boolean exists = true;
         for (int i = 0; i < users.size(); i++) {
-            if (usernumber == users.get(i).getUserNumber())
+            Long number = users.get(i).getUserNumber();
+            numbers.add(number);
+        }
+        for (int i = 0; i < numbers.size(); i++) {
+            if (usernumber == numbers.get(i)) {
                 exists = true;
+            }
             else
                 exists = false;
 

@@ -16,7 +16,8 @@ public class User {
     private String lastName;
     @Column(nullable = false)
     private String username;
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    // @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private Long userNumber;
     private boolean status;
     @ManyToOne
