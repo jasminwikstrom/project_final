@@ -17,8 +17,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public final class UserResource {
-
     private final Service service;
+
 
     @Context
     private UriInfo uriInfo;
@@ -32,6 +32,7 @@ public final class UserResource {
         User user = new User();
         user.setFirstName(useradd.getFirstName());
         user.setLastName(useradd.getLastName());
+        user.setUsername(useradd.getUsername());
         user.setTeam(useradd.getTeam());//NYTT från cla
 
         User save = service.saveUser(user);
@@ -63,11 +64,11 @@ public final class UserResource {
     @GET
     public List<User> getResult(
             @QueryParam("firstname") String firstName,
-            @QueryParam("lastname") String lastName) {
-        return service.getResult(firstName, lastName);
+            @QueryParam("lastname") String lastName,
+            @QueryParam("username") String username,
+            @QueryParam("teamname") String teamname) {
+        return service.getResult(firstName, lastName, username, teamname);
     }
-
-
 }
 
 
