@@ -11,7 +11,7 @@ public class Issue {
     private Long id;
     @Column(nullable = false)
     private String description;
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(unique=true)
     private Long issueNumber;
     @OneToOne()
     @JsonBackReference
