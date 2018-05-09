@@ -3,6 +3,7 @@ package se.javagroup.projecttask.repository.data;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class User {
@@ -21,6 +22,8 @@ public class User {
     @ManyToOne
     @JsonBackReference
     private Team team;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Collection<WorkItem> workitems;
     //@JsonManagedReference behövs ev.
 
     public User() {
@@ -95,5 +98,9 @@ public class User {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public Collection<WorkItem> getWorkitems() {
+        return workitems;
     }
 }

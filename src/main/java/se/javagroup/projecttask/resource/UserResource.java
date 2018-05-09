@@ -1,7 +1,6 @@
 package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
-import se.javagroup.projecttask.repository.data.Team;
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.service.Service;
 
@@ -31,7 +30,8 @@ public final class UserResource {
 
     @POST
     public Response addUser(User user) {
-        User newUser =
+
+       /* User newUser =
                 new User(user.getId(), user.getFirstName(), user.getLastName(),
                         user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam());
 
@@ -39,6 +39,8 @@ public final class UserResource {
 
         //return Response.ok(save).build();
         return Response.created(locationOf(service.saveUser(newUser))).build();
+*/
+        return Response.created(locationOf(service.saveUser(user))).build();
     }
 
     @DELETE
@@ -47,12 +49,17 @@ public final class UserResource {
         service.deleteUser(id);
         return Response.ok().build();
     }
-
+/*
+    @GET
+    @Path("{id}/workitems")
+    public Response getAllWorkItems(@PathParam("id") String id){
+        return Response.ok(service.getAllWorkItemsForUser(id)).build();
+    }
+*/
     @GET
     @Path("/{id}")
-    public User getUser(@PathParam("id") String id) {
-
-        return service.getUser(id);
+    public Response getUser(@PathParam("id") String id) {
+        return service.getUser(id).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
     @PUT

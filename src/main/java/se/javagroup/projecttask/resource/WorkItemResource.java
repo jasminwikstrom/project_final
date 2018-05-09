@@ -42,6 +42,7 @@ public final class WorkItemResource {
         return service.getWorkItem(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
+
     @GET
     public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("text") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
