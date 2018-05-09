@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.WorkItem;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
 @Path("workitems")
 @Component
@@ -29,7 +31,7 @@ public final class WorkItemResource {
     }
 
     @POST
-    public Response createUser(WorkItem workItem) {
+    public Response createUser(DtoWorkItem workItem) {
         WorkItem workItemNew = service.createWorkItem(workItem);
         return Response.created(locationOf(workItemNew)).build();
     }
@@ -40,10 +42,18 @@ public final class WorkItemResource {
         return service.getWorkItem(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
+
     @GET
-    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
+    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("text") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
 
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response updateWorkItem(@PathParam("id") Long id, WorkItem workItem,
+                                   @QueryParam("user") @DefaultValue("0") Long userId){
+        return Response.status(NO_CONTENT).header("Location", locationOf(service.updateWorkItem(id, workItem, userId)).toString()).build();
     }
 
     private URI locationOf(WorkItem workItem) {

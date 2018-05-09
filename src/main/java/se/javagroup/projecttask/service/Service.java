@@ -7,8 +7,11 @@ import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
+import se.javagroup.projecttask.service.exception.BadInputException;
+import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,12 +35,39 @@ public final class Service {
         this.workItemRepository = workItemRepository;
     }
 
-    public WorkItem createWorkItem(WorkItem workItem) {
-        if (workItem.getWorkItemStatus() == null) {
-            return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
-        }
-        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
 
+    public WorkItem createWorkItem(DtoWorkItem workItem) {
+        if(workItem.getWorkItemStatus() == null){
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
+
+        }
+        if(workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
+        }
+        throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
+    }
+
+    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
+        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(workItemOptional.isPresent()){
+            WorkItem workItem = workItemOptional.get();
+            if(userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))){
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else if(userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+            }
+            return workItem;
+        }
+        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
     }
 
 
@@ -123,10 +153,8 @@ public final class Service {
     }
 
 
-    public User getUser(String id) {
-        return userRepository.findById(Long.valueOf(id))
-                .map(User::new)
-                .orElseThrow(() -> new javax.ws.rs.NotFoundException("User with id " + id + " not found"));
+    public Optional<User> getUser(String id) {
+        return userRepository.findById(Long.valueOf(id));
     }
 
     public void deleteUser(String userId) {
@@ -140,17 +168,21 @@ public final class Service {
         return userRepository.findById(Long.valueOf(id))
                 .map(u -> {
                     u.setFirstName(user.getFirstName());
+                    //return userRepository.save(u); LÄGG IN TEAM HÄR?
                     return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
 
-    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+    /*public List<User> getResult(String firstName, String lastName, String username, String teamname) {
         return userRepository.findAllByQuery(firstName, lastName, username, teamname);
-
-
+    }*/
+    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+        if (firstName == null && lastName == null && username == null && teamname == null) {
+            return userRepository.findAll();
+        }
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
     }
-
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
@@ -177,6 +209,7 @@ public final class Service {
             throw new BadInputException("username must be 10 characters or more");
 
     }
+
     public Integer autogenerateUserNumber(){  // kanske borde användas när vi save new User i stället för att user.getUserNumber
         return usernumbers.getAndIncrement();
     }
@@ -192,6 +225,14 @@ public final class Service {
 
         }return  exists;
     }
+
+
+/*
+    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
+       // Collection<WorkItem> workitems = user.getWorkitems();
+        //return workitems;
+    }
+    */
 
 }
 
