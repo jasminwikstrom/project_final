@@ -13,6 +13,7 @@ public class User {
     private String firstName;
     @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String username;
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userNumber;

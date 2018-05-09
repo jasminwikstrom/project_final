@@ -1,15 +1,19 @@
 package se.javagroup.projecttask.service;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
+import se.javagroup.projecttask.service.exception.BadInputException;
+import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,12 +31,39 @@ public final class Service {
         this.workItemRepository = workItemRepository;
     }
 
-    public WorkItem createWorkItem(WorkItem workItem) {
-        if(workItem.getWorkItemStatus() == null){
-            return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
-        }
-        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
 
+    public WorkItem createWorkItem(DtoWorkItem workItem) {
+        if(workItem.getWorkItemStatus() == null){
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
+
+        }
+        if(workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
+        }
+        throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
+    }
+
+    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
+        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(workItemOptional.isPresent()){
+            WorkItem workItem = workItemOptional.get();
+            if(userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))){
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else if(userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        userOptional.get()));
+            }
+            else {
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+            }
+            return workItem;
+        }
+        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
     }
 
 
@@ -58,7 +89,7 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-    public Optional<Issue> getIssue(Long id){
+    public Optional<Issue> getIssue(Long id) {
 
         return issueRepository.findById(id);
     }
@@ -97,11 +128,17 @@ public final class Service {
 
         if (user.getFirstName() == null) {
             throw new BadInputException("Firstname can not be null");
-
         }
 
         if (user.getLastName() == null) {
             throw new BadInputException("Lastname can not be null");
+        }
+
+
+        // skulle kunna validera username här också
+
+        if (user.getUsername() == null) {
+            throw new BadInputException("Username can not be null");
         }
 
 
@@ -135,8 +172,8 @@ public final class Service {
     }
 
 
-    public List<User> getResult(String firstName, String lastName) {
-        return userRepository.findAllByQuery(firstName, lastName);
+    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
 
 
     }
@@ -144,20 +181,28 @@ public final class Service {
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
-        if(status == null && !issue && text == null) {//returerar all workItems
+        if (status == null && !issue && text == null) {//returerar all workItems
             return workItems;
         }
-        if(issue){ //sorterar listan att endast innehålla workitems med issues
+        if (issue) { //sorterar listan att endast innehålla workitems med issues
             workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
         }
-        if(status!= null) { // filtrerar listan efter inmatad status
+        if (status != null) { // filtrerar listan efter inmatad status
 
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
         }
-        if(text != null){ //sorterar listan efter innehhåll av text
-           workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
+        if (text != null) { //sorterar listan efter innehhåll av text
+            workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
+    }
+
+    public String validateUsernameLength(String username) {
+        if (!(username.length() < 10))
+            return "valid";
+        else
+            throw new BadInputException("username must be 10 characters or more");
+
     }
 
 }
