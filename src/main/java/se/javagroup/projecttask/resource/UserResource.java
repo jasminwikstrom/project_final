@@ -1,6 +1,7 @@
 package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
+import se.javagroup.projecttask.repository.data.Team;
 import se.javagroup.projecttask.repository.data.User;
 import se.javagroup.projecttask.service.Service;
 
@@ -9,6 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 
@@ -28,16 +30,15 @@ public final class UserResource {
     }
 
     @POST
-    public Response addUser(User useradd) {
-        User user = new User();
-        user.setFirstName(useradd.getFirstName());
-        user.setLastName(useradd.getLastName());
-        user.setUsername(useradd.getUsername());
-        user.setTeam(useradd.getTeam());//NYTT från cla
+    public Response addUser(User user) {
+        User newUser =
+                new User(user.getId(), user.getFirstName(), user.getLastName(),
+                        user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam());
 
-        User save = service.saveUser(user);
+        //User save = service.saveUser(user);
 
-        return Response.ok(save).build();
+        //return Response.ok(save).build();
+        return Response.created(locationOf(service.saveUser(newUser))).build();
     }
 
     @DELETE
@@ -68,6 +69,9 @@ public final class UserResource {
             @QueryParam("username") String username,
             @QueryParam("teamname") String teamname) {
         return service.getResult(firstName, lastName, username, teamname);
+    }
+    private URI locationOf(User user) {
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
 }
 
