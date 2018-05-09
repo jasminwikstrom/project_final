@@ -9,6 +9,7 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +31,18 @@ public final class Service {
         this.workItemRepository = workItemRepository;
     }
 
-    public WorkItem createWorkItem(WorkItem workItem) {
-        if (workItem.getWorkItemStatus() == null) {
-            return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
-        }
-        return workItemRepository.save(new WorkItem(workItem.getDescription(), workItem.getWorkItemStatus()));
 
+    public WorkItem createWorkItem(DtoWorkItem workItem) {
+        if(workItem.getWorkItemStatus() == null){
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
+
+        }
+        if(workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
+                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
+            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
+        }
+        throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
