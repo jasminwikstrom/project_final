@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +23,7 @@ public final class Service {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
+    private static final AtomicInteger usernumbers = new AtomicInteger(100);
 
     public Service(IssueRepository issueRepository, TeamRepository teamRepository, UserRepository userRepository, WorkItemRepository workItemRepository) {
         this.issueRepository = issueRepository;
@@ -173,6 +176,21 @@ public final class Service {
         else
             throw new BadInputException("username must be 10 characters or more");
 
+    }
+    public Integer autogenerateUserNumber(){  // kanske borde användas när vi save new User i stället för att user.getUserNumber
+        return usernumbers.getAndIncrement();
+    }
+
+    public boolean checkUserNumber(int usernumber) {  // använd autogenerateUserNumber tillsammans med detta
+        List<User> users = userRepository.findAll();
+        boolean exists = false;
+        for (int i = 0; i < users.size(); i++) {
+            if (usernumber == users.get(i).getUserNumber())
+                exists = true;
+            else
+                exists = false;
+
+        }return  exists;
     }
 
 }

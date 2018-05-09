@@ -23,7 +23,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
                               @Param("username") String username,
                               @Param("teamname") String teamname);
 
-
+  /*  @Query("SELECT * FROM USER u WHERE u.user_number =: usernumber")
+    List<User> findAllUserNumbers();
+*/
 
 
 }
