@@ -109,7 +109,7 @@ public final class Service {
 
             }
         }
-        throw new BadInputException("Kaos");
+        throw new BadInputException("You can't create an issue if the workitem is unstarted or just started");
     }
 
     public Issue updateIssue(Long id, Issue issue) {
