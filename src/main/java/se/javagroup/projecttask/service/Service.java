@@ -28,6 +28,7 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
+
         if(workItem.getWorkItemStatus() == null){
             return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
