@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -18,6 +20,7 @@ public class User {
     private Long userNumber;
     private boolean status;
     @ManyToOne
+    @JsonBackReference
     private Team team;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Collection<WorkItem> workitems;

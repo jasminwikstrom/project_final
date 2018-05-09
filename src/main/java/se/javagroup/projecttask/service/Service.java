@@ -167,20 +167,29 @@ public final class Service {
         return userRepository.findById(Long.valueOf(id))
                 .map(u -> {
                     u.setFirstName(user.getFirstName());
+                    //return userRepository.save(u); LÄGG IN TEAM HÄR?
                     return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
 
+    /*public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
+    }*/
     public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         if (firstName == null && lastName == null && username == null && teamname == null) {
             return userRepository.findAll();
         }
         return userRepository.findAllByQuery(firstName, lastName, username, teamname);
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     }
-
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();

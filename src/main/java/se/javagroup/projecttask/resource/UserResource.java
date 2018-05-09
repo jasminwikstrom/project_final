@@ -11,7 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 
 @Path("/users")
@@ -31,6 +30,16 @@ public final class UserResource {
 
     @POST
     public Response addUser(User user) {
+
+       /* User newUser =
+                new User(user.getId(), user.getFirstName(), user.getLastName(),
+                        user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam());
+
+        //User save = service.saveUser(user);
+
+        //return Response.ok(save).build();
+        return Response.created(locationOf(service.saveUser(newUser))).build();
+*/
         return Response.created(locationOf(service.saveUser(user))).build();
     }
 
