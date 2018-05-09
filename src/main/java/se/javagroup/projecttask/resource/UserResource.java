@@ -12,6 +12,8 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 
 @Path("/users")
 @Component
@@ -49,13 +51,14 @@ public final class UserResource {
         service.deleteUser(id);
         return Response.ok().build();
     }
-/*
+
     @GET
     @Path("{id}/workitems")
     public Response getAllWorkItems(@PathParam("id") String id){
-        return Response.ok(service.getAllWorkItemsForUser(id)).build();
+        Optional<User> user = service.getUser(id);
+        return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
-*/
+
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") String id) {
@@ -75,6 +78,7 @@ public final class UserResource {
             @QueryParam("lastname") String lastName,
             @QueryParam("username") String username,
             @QueryParam("teamname") String teamname) {
+
         return service.getResult(firstName, lastName, username, teamname);
     }
     private URI locationOf(User user) {

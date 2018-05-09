@@ -23,7 +23,9 @@ public class User {
     @ManyToOne
     @JsonBackReference
     private Team team;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    //@OneToMany(mappedBy = "user")
     @JsonManagedReference
     private Collection<WorkItem> workitems;
     //@JsonManagedReference behövs ev.

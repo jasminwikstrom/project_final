@@ -11,10 +11,7 @@ import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -97,19 +94,20 @@ public final class Service {
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemID) {
-        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemID);
-        if (workItemOptional.isPresent()) {
-            WorkItem oldWorkItem = workItemOptional.get();
+
+        Optional<WorkItem> foundWorkItem = workItemRepository.findById(workItemID);
+
+        if (foundWorkItem.isPresent()) {
+            WorkItem oldWorkItem = foundWorkItem.get();
             if (oldWorkItem.getWorkItemStatus().toString().equals("DONE")) {
                 Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem())));
-                oldWorkItem.setIssue(newIssue.get());
                 workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
 
                 return newIssue;
 
             }
         }
-        throw new BadInputException("Kaos");
+        throw new BadInputException("You can't create an issue if the workitem is unstarted or just started");
     }
 
     public Issue updateIssue(Long id, Issue issue) {
@@ -176,10 +174,29 @@ public final class Service {
         return userRepository.findAllByQuery(firstName, lastName, username, teamname);
     }*/
     public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+
+        List<User> users = userRepository.findAll();
+
         if (firstName == null && lastName == null && username == null && teamname == null) {
-            return userRepository.findAll();
+            return users;
         }
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
+
+        if(firstName != null){
+            users = users.stream().filter(u -> u.getFirstName().toString().equalsIgnoreCase(firstName)).collect(Collectors.toList());
+        }
+
+        if(lastName != null){
+            users = users.stream().filter(u -> u.getLastName().toString().equalsIgnoreCase(lastName)).collect(Collectors.toList());
+        }
+
+        if(username != null){
+            users = users.stream().filter(u -> u.getUsername().toString().equalsIgnoreCase(username)).collect(Collectors.toList());
+        }
+
+        if(teamname != null){
+            users = users.stream().filter(u -> u.getTeam().toString().equalsIgnoreCase(teamname)).collect(Collectors.toList());
+        }
+        return users;
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
@@ -207,12 +224,12 @@ public final class Service {
             throw new BadInputException("username must be 10 characters or more");
 
     }
-/*
-    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
-       // Collection<WorkItem> workitems = user.getWorkitems();
-        //return workitems;
+
+    public Collection<WorkItem> getAllWorkItemsForUser(Optional<User> user) {
+        return workItemRepository.findWorkItemsByUserId(user.get().getId());
+
     }
-    */
+
 }
 
 
