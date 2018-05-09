@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 
 @Path("workitems")
 @Component
@@ -44,6 +45,13 @@ public final class WorkItemResource {
     public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
 
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response updateWorkItem(@PathParam("id") Long id, WorkItem workItem,
+                                   @QueryParam("user") @DefaultValue("0") Long userId){
+        return Response.status(NO_CONTENT).header("Location", locationOf(service.updateWorkItem(id, workItem, userId)).toString()).build();
     }
 
     private URI locationOf(WorkItem workItem) {

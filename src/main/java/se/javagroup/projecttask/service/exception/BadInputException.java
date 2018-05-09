@@ -1,4 +1,4 @@
-package se.javagroup.projecttask.service;
+package se.javagroup.projecttask.service.exception;
 
 public class BadInputException extends RuntimeException {
 
