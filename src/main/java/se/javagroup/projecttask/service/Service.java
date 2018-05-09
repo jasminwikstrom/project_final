@@ -171,12 +171,15 @@ public final class Service {
     }
 
 
-    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+    /*public List<User> getResult(String firstName, String lastName, String username, String teamname) {
         return userRepository.findAllByQuery(firstName, lastName, username, teamname);
-
-
+    }*/
+    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
+        if (firstName == null && lastName == null && username == null && teamname == null) {
+            return userRepository.findAll();
+        }
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
     }
-
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
