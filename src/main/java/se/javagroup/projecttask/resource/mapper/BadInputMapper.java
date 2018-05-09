@@ -1,6 +1,6 @@
 package se.javagroup.projecttask.resource.mapper;
 
-import se.javagroup.projecttask.service.BadInputException;
+import se.javagroup.projecttask.service.exception.BadInputException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
