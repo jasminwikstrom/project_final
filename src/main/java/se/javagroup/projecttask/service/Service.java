@@ -30,7 +30,6 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItem workItem) {
-        if(workItem.getWorkItemStatus() == null){
         if (workItem.getWorkItemStatus() == null) {
             return workItemRepository.save(new WorkItem(workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
@@ -61,7 +60,6 @@ public final class Service {
         return workItemRepository.findById(id);
     }
 
-    public Optional<Issue> getIssue(Long id){
     public Optional<Issue> getIssue(Long id) {
 
         return issueRepository.findById(id);
@@ -101,21 +99,20 @@ public final class Service {
 
         if (user.getFirstName() == null) {
             throw new BadInputException("Firstname can not be null");
-
         }
 
         if (user.getLastName() == null) {
             throw new BadInputException("Lastname can not be null");
         }
-<<<<<<< HEAD
+
 
         // skulle kunna validera username här också
-=======
+
         if (user.getUsername() == null) {
             throw new BadInputException("Username can not be null");
         }
 
->>>>>>> master
+
         //return userRepository.save(user);
         //NYTT från cla
         return userRepository.save(new User(user.getId(), user.getFirstName(),
