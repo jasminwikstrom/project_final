@@ -1,6 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class User {
@@ -18,6 +19,8 @@ public class User {
     private boolean status;
     @ManyToOne
     private Team team;
+    @OneToMany(mappedBy = "user")
+    private Collection<WorkItem> workitems;
     //@JsonManagedReference behövs ev.
 
     public User() {
@@ -92,5 +95,9 @@ public class User {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public Collection<WorkItem> getWorkitems() {
+        return workitems;
     }
 }

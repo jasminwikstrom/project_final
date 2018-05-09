@@ -9,6 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.util.List;
 
 
@@ -28,16 +29,8 @@ public final class UserResource {
     }
 
     @POST
-    public Response addUser(User useradd) {
-        User user = new User();
-        user.setFirstName(useradd.getFirstName());
-        user.setLastName(useradd.getLastName());
-        user.setUsername(useradd.getUsername());
-        user.setTeam(useradd.getTeam());//NYTT från cla
-
-        User save = service.saveUser(user);
-
-        return Response.ok(save).build();
+    public Response addUser(User user) {
+        return Response.created(locationOf(service.saveUser(user))).build();
     }
 
     @DELETE
@@ -45,6 +38,12 @@ public final class UserResource {
     public Response deleteUser(@PathParam("id") String id) {
         service.deleteUser(id);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("{id}/workitems")
+    public Response getAllWorkItems(@PathParam("id") String id){
+        return Response.ok(service.getAllWorkItemsForUser(id)).build();
     }
 
     @GET
@@ -68,6 +67,9 @@ public final class UserResource {
             @QueryParam("username") String username,
             @QueryParam("teamname") String teamname) {
         return service.getResult(firstName, lastName, username, teamname);
+    }
+    private URI locationOf(User user) {
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
 }
 

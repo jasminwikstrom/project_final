@@ -11,6 +11,7 @@ import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -204,6 +205,11 @@ public final class Service {
 
     }
 
+    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
+        User user = getUser(id);
+        Collection<WorkItem> workitems = user.getWorkitems();
+        return workitems;
+    }
 }
 
 
