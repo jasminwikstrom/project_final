@@ -1,5 +1,6 @@
 package se.javagroup.projecttask.service;
 
+import org.hashids.Hashids;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
@@ -66,10 +67,10 @@ public final class Service {
 
     public Optional<Issue> createIssue(Issue issue, Long workItemID) {
 
-        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemID);
+        Optional<WorkItem> foundWorkItem = workItemRepository.findById(workItemID);
 
-        if (workItemOptional.isPresent()) {
-            WorkItem oldWorkItem = workItemOptional.get();
+        if (foundWorkItem.isPresent()) {
+            WorkItem oldWorkItem = foundWorkItem.get();
             if (oldWorkItem.getWorkItemStatus().toString().equals("DONE")) {
                 Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem())));
                 workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
