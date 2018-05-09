@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,10 +13,12 @@ public class Issue {
     private String description;
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long issueNumber;
-    @OneToOne
+    @OneToOne()
+    @JsonBackReference
     private WorkItem workItem;
 
-    protected Issue(){}
+    protected Issue() {
+    }
 
     public Issue(String description, WorkItem workItem) {
         this.description = description;
@@ -25,12 +29,24 @@ public class Issue {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Long getIssueNumber() {
         return issueNumber;
+    }
+
+    public void setIssueNumber(Long issueNumber) {
+        this.issueNumber = issueNumber;
     }
 
     public WorkItem getWorkItem() {
@@ -39,17 +55,5 @@ public class Issue {
 
     public void setWorkItem(WorkItem workItem) {
         this.workItem = workItem;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setIssueNumber(Long issueNumber) {
-        this.issueNumber = issueNumber;
     }
 }

@@ -36,11 +36,17 @@ public final class WorkItemResource {
 
     @GET
     @Path("{id}")
-    public Response getWorkItem(@PathParam("id") Long id){
+    public Response getWorkItem(@PathParam("id") Long id) {
         return service.getWorkItem(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
-    private URI locationOf(WorkItem workItem){
+    @GET
+    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
+       return Response.ok(service.getAllWorkItems(status, issue, text)).build();
+
+    }
+
+    private URI locationOf(WorkItem workItem) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(workItem.getId().toString()).build();
     }
 }
