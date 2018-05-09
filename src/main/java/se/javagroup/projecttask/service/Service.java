@@ -104,7 +104,7 @@ public final class Service {
             throw new BadInputException("Lastname can not be null");
         }
 
-
+        // skulle kunna validera username här också
         //return userRepository.save(user);
         //NYTT från cla
         return userRepository.save(new User(user.getId(), user.getFirstName(),
@@ -157,6 +157,14 @@ public final class Service {
            workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
+    }
+
+    public String validateUsernameLength(String username) {
+        if (!(username.length() < 10))
+            return "valid";
+        else
+            throw new BadInputException("username must be 10 characters or more");
+
     }
 
 }
