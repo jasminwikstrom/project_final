@@ -66,6 +66,7 @@ public final class UserResource {
             @QueryParam("lastname") String lastName,
             @QueryParam("username") String username,
             @QueryParam("teamname") String teamname) {
+
         return service.getResult(firstName, lastName, username, teamname);
     }
     private URI locationOf(User user) {

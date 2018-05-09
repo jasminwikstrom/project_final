@@ -173,8 +173,11 @@ public final class Service {
 
 
     public List<User> getResult(String firstName, String lastName, String username, String teamname) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
 
+        if (firstName == null && lastName == null && username == null && teamname == null) {
+            return userRepository.findAll();
+        }
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
 
     }
 
