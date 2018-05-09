@@ -60,7 +60,8 @@ public final class Service {
                         userOptional.get()));
             }
             else {
-                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                                            workItem.getUser()));
             }
             return workItem;
         }
