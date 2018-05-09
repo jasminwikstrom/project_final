@@ -29,12 +29,7 @@ public class WorkItem {
     public WorkItem(Long id, String description, WorkItemStatus workItemStatus) {
         this.id = id;
         this.description = description;
-        this.workItemStatus = workItemStatus;
-    }
-
-    public WorkItem(String description, WorkItemStatus workItemStatus) {
-        this.description = description;
-        this.workItemStatus = workItemStatus;
+        this.workItemStatus = workItemStatus;// WorkItemStatus.valueOf(workItemStatus.toUpperCase());
     }
 
     public Long getId() {

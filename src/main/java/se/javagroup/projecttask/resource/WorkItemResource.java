@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.WorkItem;
+import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -29,7 +30,7 @@ public final class WorkItemResource {
     }
 
     @POST
-    public Response createUser(WorkItem workItem) {
+    public Response createUser(DtoWorkItem workItem) {
         WorkItem workItemNew = service.createWorkItem(workItem);
         return Response.created(locationOf(workItemNew)).build();
     }
@@ -41,7 +42,7 @@ public final class WorkItemResource {
     }
 
     @GET
-    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("textkj") String text){
+    public Response getAllWorkItems(@QueryParam("status") String status, @QueryParam("issue") @DefaultValue("false") boolean issue, @QueryParam("text") String text){
        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
 
     }
