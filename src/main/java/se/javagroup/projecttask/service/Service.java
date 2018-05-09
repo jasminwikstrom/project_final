@@ -150,10 +150,8 @@ public final class Service {
     }
 
 
-    public User getUser(String id) {
-        return userRepository.findById(Long.valueOf(id))
-                .map(User::new)
-                .orElseThrow(() -> new javax.ws.rs.NotFoundException("User with id " + id + " not found"));
+    public Optional<User> getUser(String id) {
+        return userRepository.findById(Long.valueOf(id));
     }
 
     public void deleteUser(String userId) {
@@ -204,12 +202,12 @@ public final class Service {
             throw new BadInputException("username must be 10 characters or more");
 
     }
-
+/*
     public Collection<WorkItem> getAllWorkItemsForUser(String id) {
-        User user = getUser(id);
-        Collection<WorkItem> workitems = user.getWorkitems();
-        return workitems;
+       // Collection<WorkItem> workitems = user.getWorkitems();
+        //return workitems;
     }
+    */
 }
 
 

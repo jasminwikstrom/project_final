@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 
 @Path("/users")
@@ -39,18 +40,17 @@ public final class UserResource {
         service.deleteUser(id);
         return Response.ok().build();
     }
-
+/*
     @GET
     @Path("{id}/workitems")
     public Response getAllWorkItems(@PathParam("id") String id){
         return Response.ok(service.getAllWorkItemsForUser(id)).build();
     }
-
+*/
     @GET
     @Path("/{id}")
-    public User getUser(@PathParam("id") String id) {
-
-        return service.getUser(id);
+    public Response getUser(@PathParam("id") String id) {
+        return service.getUser(id).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
     @PUT

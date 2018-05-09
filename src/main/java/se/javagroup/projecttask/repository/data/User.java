@@ -19,7 +19,7 @@ public class User {
     private boolean status;
     @ManyToOne
     private Team team;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Collection<WorkItem> workitems;
     //@JsonManagedReference behövs ev.
 
