@@ -16,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userNumber;
     private boolean status;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Team team;
     //@JsonManagedReference behövs ev.
 

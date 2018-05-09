@@ -8,13 +8,14 @@ import se.javagroup.projecttask.repository.UserRepository;
 import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public class Service {
+public final class Service {
 
     private final IssueRepository issueRepository;
     private final TeamRepository teamRepository;
@@ -94,7 +95,6 @@ public class Service {
         issueRepository.deleteById(issue.getId());
     }
 
-    @Transactional
     public User saveUser(User user) {
 
         if (user.getFirstName() == null) {
@@ -110,7 +110,8 @@ public class Service {
 
         //return userRepository.save(user);
         //NYTT från cla
-        return userRepository.save(user);
+        return userRepository.save(new User(user.getId(), user.getFirstName(),
+                user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam()));
     }
 
 
