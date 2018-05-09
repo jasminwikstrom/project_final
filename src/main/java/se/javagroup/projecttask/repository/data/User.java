@@ -15,6 +15,7 @@ public class User {
     private String username;
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userNumber;
+    @Column(nullable = false)
     private boolean status;
     @ManyToOne
     private Team team;
@@ -86,11 +87,20 @@ public class User {
         this.status = status;
     }
 
+    public boolean getStatus(boolean status) {
+        return status;
+    }
+
+
     public Team getTeam() {
         return team;
     }
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+
+    public void getStatus() {
     }
 }

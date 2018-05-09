@@ -132,6 +132,8 @@ public final class Service {
         return userRepository.findById(Long.valueOf(id))
                 .map(u -> {
                     u.setFirstName(user.getFirstName());
+                    u.setLastName(user.getLastName());
+                    u.setStatus(user.isStatus());
                     return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
