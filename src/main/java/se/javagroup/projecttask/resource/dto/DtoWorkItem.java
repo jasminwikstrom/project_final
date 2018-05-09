@@ -19,9 +19,10 @@ public class DtoWorkItem {
 
     private Issue issue;
 
-    public DtoWorkItem(String description, String workItemStatus) {
+    public DtoWorkItem(String description, String workItemStatus, User user) {
         this.description = description;
         this.workItemStatus = workItemStatus;
+        this.user = user;
     }
 
     public Long getId() {

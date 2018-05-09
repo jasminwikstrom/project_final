@@ -13,6 +13,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 
 @Path("/users")
 @Component
@@ -40,13 +42,14 @@ public final class UserResource {
         service.deleteUser(id);
         return Response.ok().build();
     }
-/*
+
     @GET
     @Path("{id}/workitems")
     public Response getAllWorkItems(@PathParam("id") String id){
-        return Response.ok(service.getAllWorkItemsForUser(id)).build();
+        Optional<User> user = service.getUser(id);
+        return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
-*/
+
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") String id) {

@@ -11,10 +11,7 @@ import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -202,12 +199,12 @@ public final class Service {
             throw new BadInputException("username must be 10 characters or more");
 
     }
-/*
-    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
-       // Collection<WorkItem> workitems = user.getWorkitems();
-        //return workitems;
+
+    public Collection<WorkItem> getAllWorkItemsForUser(Optional<User> user) {
+        return workItemRepository.findWorkItemsByUserId(user.get().getId());
+
     }
-    */
+
 }
 
 

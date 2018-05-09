@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -19,7 +21,8 @@ public class User {
     private boolean status;
     @ManyToOne
     private Team team;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private Collection<WorkItem> workitems;
     //@JsonManagedReference behövs ev.
 
