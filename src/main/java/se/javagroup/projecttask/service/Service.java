@@ -1,6 +1,5 @@
 package se.javagroup.projecttask.service;
 
-import org.hashids.Hashids;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
