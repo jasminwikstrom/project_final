@@ -148,18 +148,23 @@ public final class Service {
 
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
+
         if (numberexists == true) {
             usernumber = randomizedUserNumber();
             numberexists = checkUserNumber(usernumber);
+            user.setUserNumber(usernumber);
         }
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
-        if(user.getTeam() != null){
+
+
+       /* if(user.getTeam() != null){
             if (teamIsFull(user.getTeam().getId()) == true) {
                 throw new BadInputException("This team is full. Choose another team.");
             }
-        }
+        }*/
+
         return userRepository.save(user);
     }
 
@@ -183,6 +188,11 @@ public final class Service {
 
 
     public User updateUser(String id, User user) {
+
+
+            if (teamIsFull(user.getTeam().getId()) == true) {
+                throw new BadInputException("This team is full. Choose another team.");
+            }
 
         return userRepository.findById(Long.valueOf(id))
                 .map(u -> {
@@ -333,7 +343,7 @@ public final class Service {
             return false;
         }
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeam().getId() == (team.getId())) {
+           if (users.get(i).getTeam().getId() == (team.getId())) {
                 teammembers++;
             } else if (users.get(i).getTeam().getId() != (team.getId())) {
                 teammembers = 0;
