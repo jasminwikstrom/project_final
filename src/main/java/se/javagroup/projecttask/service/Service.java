@@ -144,8 +144,21 @@ public final class Service {
             throw new BadInputException("Username can not be null");
         }
 
-        if (validateUsernameLength(user.getUsername()).equals("valid")) ;
+        if (validateUsernameLength(user.getUsername()).equals("valid"));
 
+            Long usernumber = randomizedUserNumber();
+            boolean numberexists = checkUserNumber(usernumber);
+
+            if (numberexists == true) {
+                usernumber = randomizedUserNumber();
+                numberexists = checkUserNumber(usernumber);
+                user.setUserNumber(usernumber);
+            }
+            if (numberexists == false) {
+                user.setUserNumber(usernumber);
+            }
+
+<<<<<<< HEAD
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
         if (numberexists == true) {
@@ -155,6 +168,8 @@ public final class Service {
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
+=======
+>>>>>>> master
 
         if(user.getTeam() != null){
             if (teamIsFull(user.getTeam().getId()) == true) {
@@ -318,6 +333,11 @@ public final class Service {
         List<User> users = userRepository.findAll();
         List<Long> numbers = new ArrayList<>();
         boolean exists = true;
+
+        if(users == null){
+            return false;
+        }
+
         for (int i = 0; i < users.size(); i++) {
             Long number = users.get(i).getUserNumber();
             numbers.add(number);

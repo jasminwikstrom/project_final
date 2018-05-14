@@ -18,7 +18,7 @@ public class User {
     @Column(nullable = false)
     private String username;
     // @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private Long userNumber;
     private boolean status;
     @ManyToOne
