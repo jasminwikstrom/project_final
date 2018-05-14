@@ -30,10 +30,11 @@ public final class Service {
 
 
     public WorkItem createWorkItem(DtoWorkItem workItem) {
+
         if(workItem.getWorkItemStatus() == null){
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
-
         }
+
         if(workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
                 || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
                 || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
@@ -41,7 +42,7 @@ public final class Service {
         }
         throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
     }
-
+    
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
         Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
         Optional<User> userOptional = userRepository.findById(userId);
@@ -94,6 +95,7 @@ public final class Service {
     public Optional<Issue> createIssue(Issue issue, Long workItemID) {
 
         Optional<WorkItem> foundWorkItem = workItemRepository.findById(workItemID);
+
 
         if (foundWorkItem.isPresent()) {
             WorkItem oldWorkItem = foundWorkItem.get();
