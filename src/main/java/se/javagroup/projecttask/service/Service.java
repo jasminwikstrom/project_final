@@ -152,6 +152,12 @@ public final class Service {
             user.setUserNumber(usernumber);
         }
 
+       /* if(teamIsFull(user.getTeamID()) == true){
+            throw new BadInputException("This team is full. Choose another team.");
+        }*/
+
+
+        // check if user already exists in a team and if not if team is full
 
         //return userRepository.save(user);
         //NYTT från cla
@@ -242,6 +248,25 @@ public final class Service {
         }return  exists;
     }
 
+    public boolean teamIsFull(Long teamId) {
+        List<User> users = userRepository.findAll();
+        Team team = teamRepository.getOne(teamId);
+        int teammembers = 0;
+        boolean full = true;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getTeamID() == (team.getId())) {
+                teammembers++;
+            } else if (users.get(i).getTeamID() != (team.getId())) {
+                teammembers = 0;
+            }
+        }
+        if (teammembers < 10) {
+            full = false;
+        } else if (teammembers == 10) {
+            full = true;
+        }
+        return full;
+    }
 
 /*
     public Collection<WorkItem> getAllWorkItemsForUser(String id) {

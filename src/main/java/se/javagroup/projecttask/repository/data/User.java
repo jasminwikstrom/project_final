@@ -101,6 +101,10 @@ public class User {
         this.team = team;
     }
 
+    public Long getTeamID() {
+        return getTeamID();
+    }
+
     public Collection<WorkItem> getWorkitems() {
         return workitems;
     }
