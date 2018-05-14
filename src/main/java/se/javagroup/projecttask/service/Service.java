@@ -1,7 +1,6 @@
 package se.javagroup.projecttask.service;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
 import se.javagroup.projecttask.repository.UserRepository;
@@ -198,6 +197,7 @@ public final class Service {
         return users;
     }
 
+
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
         if (status == null && !issue && text == null) {//returerar all workItems
@@ -229,11 +229,10 @@ public final class Service {
 
     }
 
-    public void deleteWorkItem(Optional<WorkItem> workItem) {
-        workItem.get().setUser(null);
-        workItemRepository.save(workItem.get());
-        workItemRepository.delete(workItem.get());
+    public Optional<WorkItem> deleteWorkItem(Long id) {
+        return  workItemRepository.findById(id).map( w -> {w.setUser(null); workItemRepository.save(w); workItemRepository.delete(w); return w;});
     }
+
 }
 
 

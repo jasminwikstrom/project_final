@@ -72,7 +72,6 @@ public final class UserResource {
         return service.updateUser(id, user);
     }
 
-
     @GET
     public List<User> getResult(
             @QueryParam("firstname") String firstName,
@@ -82,6 +81,8 @@ public final class UserResource {
 
         return service.getResult(firstName, lastName, username, teamname);
     }
+
+
     private URI locationOf(User user) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
