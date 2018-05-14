@@ -10,6 +10,7 @@ import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
+<<<<<<< HEAD
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import java.util.*;
 
+=======
+import java.util.*;
+>>>>>>> JoelWorkItemForTeam
 import java.util.stream.Collectors;
 
 @Component
@@ -57,16 +61,21 @@ public final class Service {
         if(workItemOptional.isPresent()){
             WorkItem workItem = workItemOptional.get();
             if(userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))){
-                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
                         userOptional.get()));
             }
             else if(userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
-                workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
                         userOptional.get()));
             }
+<<<<<<< HEAD
             else {
                 workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
                                             workItem.getUser()));
+=======
+            else if(workItemNew != null && !"".equals(workItemNew)){
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+>>>>>>> JoelWorkItemForTeam
             }
             return workItem;
         }
@@ -178,8 +187,18 @@ public final class Service {
         return userRepository.findById(Long.valueOf(id));
     }
 
-    public void deleteUser(String userId) {
-        userRepository.findById(Long.valueOf(userId)).ifPresent(userRepository::delete);
+    public boolean deleteUser(Long userId) {
+        //userRepository.findById(Long.valueOf(userId)).ifPresent(userRepository::delete);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            for(WorkItem w : user.getWorkitems()){
+                workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), w.getWorkItemStatus(), null));
+            }
+            userRepository.delete(userOptional.get());
+            return true;
+        }
+        return false;
     }
 
 
@@ -242,7 +261,58 @@ public final class Service {
         return workItems;
     }
 
+<<<<<<< HEAD
     private String validateUsernameLength(String username) {
+=======
+    public List<WorkItem> getAllWorkItemsForTeam(Long teamID){
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+        List<WorkItem> workItems = new ArrayList<>();
+        if(teamOptional.isPresent()){
+            for(User u : teamOptional.get().getUsers()){
+                for(WorkItem w : u.getWorkitems()){
+                    workItems.add(w);
+                }
+            }
+            return workItems;
+        }
+        throw new BadInputException("Team not found");
+    }
+
+    public User addUserToTeam(Long teamID, Long userID){                //Av Joel (inte hållbar lösning kanske?)
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+        Optional<User> userOptional = userRepository.findById(userID);
+        if(!teamOptional.isPresent() || !userOptional.isPresent()){
+            throw new BadInputException("Team or user doesn't exist");
+        }
+        User user = userOptional.get();
+        return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
+                                user.getUserNumber(), user.isStatus(), teamOptional.get()));
+    }
+
+    public Team getTeam(Long teamID){
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+        if(teamOptional.isPresent()){
+            return teamOptional.get();
+        }
+        throw new BadInputException("Team not found");
+    }
+
+    public boolean deleteTeam(Long teamID){
+        Optional<Team> teamOptional = teamRepository.findById(teamID);
+        if(teamOptional.isPresent()){
+            Team team = teamOptional.get();
+            for(User u : team.getUsers()){
+                userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(), u.getUserNumber(),
+                                    u.isStatus(), null));
+            }
+            teamRepository.delete(teamOptional.get());
+            return true;
+        }
+        return false;
+    }
+
+    public String validateUsernameLength(String username) {
+>>>>>>> JoelWorkItemForTeam
         if (!(username.length() < 10))
             return "valid";
         else

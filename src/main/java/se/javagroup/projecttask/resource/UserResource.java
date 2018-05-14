@@ -47,6 +47,7 @@ public final class UserResource {
 
     }
 
+<<<<<<< HEAD
     @DELETE
     @Path("/{id}")
     public Response deleteUser(@PathParam("id") String id) {
@@ -54,6 +55,9 @@ public final class UserResource {
         return Response.ok().build();
     }
 
+=======
+/*
+>>>>>>> JoelWorkItemForTeam
     @GET
     @Path("{id}/workitems")
     public Response getAllWorkItems(@PathParam("id") String id){
@@ -83,6 +87,16 @@ public final class UserResource {
 
         return service.getResult(firstName, lastName, username, teamname);
     }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteUser(@PathParam("id") Long id) {      //ändrad för tillfällig lösning av Joel
+        if(service.deleteUser(id)){
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
     private URI locationOf(User user) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
