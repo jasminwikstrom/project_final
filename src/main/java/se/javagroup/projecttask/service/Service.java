@@ -174,7 +174,6 @@ public final class Service {
     }
 
     public boolean deleteUser(Long userId) {
-        //userRepository.findById(Long.valueOf(userId)).ifPresent(userRepository::delete);
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent()){
             User user = userOptional.get();
