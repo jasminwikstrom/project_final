@@ -33,31 +33,9 @@ public final class UserResource {
 
     @POST
     public Response addUser(User user) {
-
-       /* User newUser =
-                new User(user.getId(), user.getFirstName(), user.getLastName(),
-                        user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam());
-
-        //User save = service.saveUser(user);
-
-        //return Response.ok(save).build();
-        return Response.created(locationOf(service.saveUser(newUser))).build();
-*/
         return Response.created(locationOf(service.saveUser(user))).build();
-
     }
 
-<<<<<<< HEAD
-    @DELETE
-    @Path("/{id}")
-    public Response deleteUser(@PathParam("id") String id) {
-        service.deleteUser(id);
-        return Response.ok().build();
-    }
-
-=======
-/*
->>>>>>> JoelWorkItemForTeam
     @GET
     @Path("{id}/workitems")
     public Response getAllWorkItems(@PathParam("id") String id){

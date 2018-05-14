@@ -9,20 +9,12 @@ import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
-
-<<<<<<< HEAD
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-
 import java.util.*;
-
-=======
-import java.util.*;
->>>>>>> JoelWorkItemForTeam
 import java.util.stream.Collectors;
 
 @Component
@@ -67,15 +59,10 @@ public final class Service {
             else if(userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
                         userOptional.get()));
-            }
-<<<<<<< HEAD
-            else {
-                workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
-                                            workItem.getUser()));
-=======
-            else if(workItemNew != null && !"".equals(workItemNew)){
+
+            }else if(workItemNew != null && !"".equals(workItemNew)){
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
->>>>>>> JoelWorkItemForTeam
+
             }
             return workItem;
         }
@@ -173,13 +160,7 @@ public final class Service {
             }
         }
 
-
-        // check if user already exists in a team and if not if team is full
-
-        //return userRepository.save(user);
-        //NYTT från cla
-        return userRepository.save(new User(user.getId(), user.getFirstName(),
-                user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam()));
+        return userRepository.save(user);
     }
 
 
@@ -261,9 +242,7 @@ public final class Service {
         return workItems;
     }
 
-<<<<<<< HEAD
-    private String validateUsernameLength(String username) {
-=======
+
     public List<WorkItem> getAllWorkItemsForTeam(Long teamID){
         Optional<Team> teamOptional = teamRepository.findById(teamID);
         List<WorkItem> workItems = new ArrayList<>();
@@ -312,7 +291,6 @@ public final class Service {
     }
 
     public String validateUsernameLength(String username) {
->>>>>>> JoelWorkItemForTeam
         if (!(username.length() < 10))
             return "valid";
         else
