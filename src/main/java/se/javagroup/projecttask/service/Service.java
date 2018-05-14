@@ -10,15 +10,8 @@ import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
-
 import java.util.*;
-
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
@@ -158,10 +151,11 @@ public final class Service {
             user.setUserNumber(usernumber);
         }
 
-        if(teamIsFull(user.getTeamID()) == true){
-            throw new BadInputException("This team is full. Choose another team.");
+        if (user.getTeam().getId() == null) {
+            if (teamIsFull(user.getTeam().getId()) == true) {
+                throw new BadInputException("This team is full. Choose another team.");
+            }
         }
-
 
         // check if user already exists in a team and if not if team is full
 
@@ -280,9 +274,9 @@ public final class Service {
         int teammembers = 0;
         boolean full = true;
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeamID() == (team.getId())) {
+            if (users.get(i).getTeam().getId() == (team.getId())) {
                 teammembers++;
-            } else if (users.get(i).getTeamID() != (team.getId())) {
+            } else if (users.get(i).getTeam().getId() != (team.getId())) {
                 teammembers = 0;
             }
         }
