@@ -1,11 +1,7 @@
 package se.javagroup.projecttask.resource.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.repository.data.User;
-import se.javagroup.projecttask.repository.data.WorkItemStatus;
-
-import javax.persistence.*;
 
 public class DtoWorkItem {
 

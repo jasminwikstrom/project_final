@@ -38,7 +38,7 @@ public final class UserResource {
 
     @GET
     @Path("{id}/workitems")
-    public Response getAllWorkItems(@PathParam("id") String id){
+    public Response getAllWorkItems(@PathParam("id") String id) {
         Optional<User> user = service.getUser(id);
         return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
@@ -68,7 +68,7 @@ public final class UserResource {
     @DELETE
     @Path("{id}")
     public Response deleteUser(@PathParam("id") Long id) {      //ändrad för tillfällig lösning av Joel
-        if(service.deleteUser(id)){
+        if (service.deleteUser(id)) {
             return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();

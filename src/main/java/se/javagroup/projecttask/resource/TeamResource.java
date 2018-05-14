@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Path("teams")
@@ -32,7 +31,7 @@ public final class TeamResource {
 
     @GET
     @Path("{id}")
-    public Response getTeam(@PathParam("id") Long id){
+    public Response getTeam(@PathParam("id") Long id) {
         return Response.ok(service.getTeam(id)).build();
     }
 
@@ -49,7 +48,7 @@ public final class TeamResource {
 
     @PUT
     @Path("{teamID}/{userID}")
-    public Response addUserToTeam(@PathParam("teamID") Long teamID, @PathParam("userID") Long userID){
+    public Response addUserToTeam(@PathParam("teamID") Long teamID, @PathParam("userID") Long userID) {
         User user = service.addUserToTeam(teamID, userID);
         return Response.ok(user).build();
     }
@@ -65,15 +64,15 @@ public final class TeamResource {
 
     @GET
     @Path("{id}/workitems")
-    public Response getWorkItemsForTeam(@PathParam("id") Long teamID){
+    public Response getWorkItemsForTeam(@PathParam("id") Long teamID) {
         List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamID);
         return Response.ok(workItems).build();
     }
 
     @DELETE
     @Path("{id}")
-    public Response deleteTeam(@PathParam("id") Long teamID){
-        if(service.deleteTeam(teamID)){
+    public Response deleteTeam(@PathParam("id") Long teamID) {
+        if (service.deleteTeam(teamID)) {
             return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();

@@ -5,7 +5,6 @@ import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
 import java.util.Collections;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;

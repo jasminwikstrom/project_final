@@ -11,7 +11,7 @@ public class Issue {
     private Long id;
     @Column(nullable = false)
     private String description;
-    @Column(unique=true)
+    @Column(unique = true)
     private String issueNumber;
     @OneToOne()
     @JsonBackReference
