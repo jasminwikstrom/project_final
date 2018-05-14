@@ -57,24 +57,9 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getUsers(String firstName, String lastName, String username, String teamname) {
-        List<User> users = userRepository.findAll();
-        if (firstName == null && lastName == null && username == null && teamname == null) {
-            return users;
-        }
-        if (firstName != null) {
-            users = users.stream().filter(u -> u.getFirstName().toString().equalsIgnoreCase(firstName)).collect(Collectors.toList());
-        }
-        if (lastName != null) {
-            users = users.stream().filter(u -> u.getLastName().toString().equalsIgnoreCase(lastName)).collect(Collectors.toList());
-        }
-        if (username != null) {
-            users = users.stream().filter(u -> u.getUsername().toString().equalsIgnoreCase(username)).collect(Collectors.toList());
-        }
-        if (teamname != null) {
-            users = users.stream().filter(u -> u.getTeam().toString().equalsIgnoreCase(teamname)).collect(Collectors.toList());
-        }
-        return users;
+    public List<User> getResult(String firstName, String lastName, String username, String teamname, String userNumber) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
+
     }
 
     public Optional<User> getUser(String userId) {
