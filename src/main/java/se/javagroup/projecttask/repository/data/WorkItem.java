@@ -1,5 +1,6 @@
 package se.javagroup.projecttask.repository.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class WorkItem {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long workItemNumber;
     @ManyToOne()
+    @JsonIgnore
     private User user;
     //@XmlTransient
     @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER)
