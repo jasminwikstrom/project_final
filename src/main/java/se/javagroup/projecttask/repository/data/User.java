@@ -45,9 +45,12 @@ public class User {
 
     }
 
-
-    public User(User user) {
+    public User(String firstName, String lastName, String username) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
     }
+
 
     public Long getId() {
         return id;
@@ -103,10 +106,6 @@ public class User {
 
     public void setTeam(Team team) {
         this.team = team;
-    }
-
-    public Long getTeamID() {
-        return getTeamID();
     }
 
     public Collection<WorkItem> getWorkitems() {

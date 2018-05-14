@@ -158,8 +158,10 @@ public final class Service {
             user.setUserNumber(usernumber);
         }
 
-        if(teamIsFull(user.getTeamID()) == true){
-            throw new BadInputException("This team is full. Choose another team.");
+        if(user.getTeam() != null){
+            if (teamIsFull(user.getTeam().getId()) == true) {
+                throw new BadInputException("This team is full. Choose another team.");
+            }
         }
 
 
@@ -240,7 +242,7 @@ public final class Service {
         return workItems;
     }
 
-    public String validateUsernameLength(String username) {
+    private String validateUsernameLength(String username) {
         if (!(username.length() < 10))
             return "valid";
         else
@@ -249,14 +251,14 @@ public final class Service {
     }
 
 
-    public Long randomizedUserNumber() {
+    private Long randomizedUserNumber() {
         Random random = new Random();
         int randomI = random.nextInt(1000);
         Long randomII = Long.valueOf(randomI);
         return randomII;
     }
 
-    public boolean checkUserNumber(Long usernumber) {  // använd autogenerateUserNumber tillsammans med detta
+    private boolean checkUserNumber(Long usernumber) {  // använd autogenerateUserNumber tillsammans med detta
         List<User> users = userRepository.findAll();
         List<Long> numbers = new ArrayList<>();
         boolean exists = true;
@@ -274,15 +276,19 @@ public final class Service {
         }return  exists;
     }
 
-    public boolean teamIsFull(Long teamId) {
+    private boolean teamIsFull(Long teamId) {
         List<User> users = userRepository.findAll();
         Team team = teamRepository.getOne(teamId);
         int teammembers = 0;
         boolean full = true;
+
+        if(teamId == null){
+            return false;
+        }
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeamID() == (team.getId())) {
+            if (users.get(i).getTeam().getId() == (team.getId())) {
                 teammembers++;
-            } else if (users.get(i).getTeamID() != (team.getId())) {
+            } else if (users.get(i).getTeam().getId() != (team.getId())) {
                 teammembers = 0;
             }
         }
