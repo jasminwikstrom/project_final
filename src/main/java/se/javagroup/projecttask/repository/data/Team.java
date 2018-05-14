@@ -18,8 +18,7 @@ public class Team {
     @JsonManagedReference
     private Collection<User> users;
 
-    protected Team() {
-    }
+    protected Team() {}
 
     public Team(String name, boolean status, Long teamNumber) {
         this.name = name;

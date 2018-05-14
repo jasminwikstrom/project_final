@@ -1,7 +1,6 @@
 package se.javagroup.projecttask.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -16,18 +15,14 @@ public class WorkItem {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WorkItemStatus workItemStatus;
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long workItemNumber;
     @ManyToOne()
     @JsonBackReference
     private User user;
-    //@XmlTransient
     @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private Issue issue;
 
-    protected WorkItem() {
-    }
+    protected WorkItem() {}
 
     public WorkItem(String description, WorkItemStatus workItemStatus) {
         this.description = description;
@@ -47,7 +42,6 @@ public class WorkItem {
         this.user = user;
     }
 
-
     public Long getId() {
         return id;
     }
@@ -60,12 +54,12 @@ public class WorkItem {
         return workItemStatus;
     }
 
-    public Long getWorkItemNumber() {
-        return workItemNumber;
-    }
-
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Issue getIssue() {
@@ -74,9 +68,5 @@ public class WorkItem {
 
     public void setIssue(Issue issue) {
         this.issue = issue;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

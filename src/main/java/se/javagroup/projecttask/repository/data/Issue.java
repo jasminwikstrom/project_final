@@ -1,7 +1,6 @@
 package se.javagroup.projecttask.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 
 @Entity
@@ -11,14 +10,13 @@ public class Issue {
     private Long id;
     @Column(nullable = false)
     private String description;
-    @Column(unique=true)
+    @Column(unique = true)
     private String issueNumber;
     @OneToOne()
     @JsonBackReference
     private WorkItem workItem;
 
-    protected Issue() {
-    }
+    protected Issue() {}
 
     public Issue(String description, WorkItem workItem) {
         this.description = description;
