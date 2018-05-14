@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Optional;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
@@ -55,6 +56,14 @@ public final class WorkItemResource {
                                    @QueryParam("user") @DefaultValue("0") Long userId){
         return Response.status(NO_CONTENT).header("Location", locationOf(service.updateWorkItem(id, workItem, userId)).toString()).build();
 
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteWorkItem(@PathParam("id") Long id){
+        Optional<WorkItem> workItem = service.getWorkItem(id);
+        service.deleteWorkItem(workItem);
+        return workItem.map(w -> Response.status(NO_CONTENT)).orElse(Response.status(NOT_FOUND)).build();
     }
 
     private URI locationOf(WorkItem workItem) {

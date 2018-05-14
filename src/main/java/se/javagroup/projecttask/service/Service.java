@@ -229,6 +229,11 @@ public final class Service {
 
     }
 
+    public void deleteWorkItem(Optional<WorkItem> workItem) {
+        workItem.get().setUser(null);
+        workItemRepository.save(workItem.get());
+        workItemRepository.delete(workItem.get());
+    }
 }
 
 
