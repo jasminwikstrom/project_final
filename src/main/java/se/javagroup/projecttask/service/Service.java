@@ -148,7 +148,7 @@ public final class Service {
 
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
-        while (numberexists == true) {
+        if (numberexists == true) {
             usernumber = randomizedUserNumber();
             numberexists = checkUserNumber(usernumber);
         }
@@ -162,6 +162,11 @@ public final class Service {
             }
         }
 
+
+        // check if user already exists in a team and if not if team is full
+
+        //return userRepository.save(user);
+        //NYTT från cla
         return userRepository.save(user);
     }
 
