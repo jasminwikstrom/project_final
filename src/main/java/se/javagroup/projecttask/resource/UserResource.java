@@ -59,9 +59,10 @@ public final class UserResource {
             @QueryParam("firstname") String firstName,
             @QueryParam("lastname") String lastName,
             @QueryParam("username") String username,
+            @QueryParam("usernumber") String usernumber,
             @QueryParam("teamname") String teamname) {
 
-        return service.getResult(firstName, lastName, username, teamname);
+        return service.getResult(firstName, lastName, username, teamname, usernumber);
     }
 
     @DELETE

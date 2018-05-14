@@ -16,9 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     "WHERE (:firstname is null or u.first_name = :firstname) AND" +
                     "(:lastname is null or u.last_name = :lastname) AND " +
                     "(:username is null or u.username = :username) AND " +
+                    "(:usernumber is null or u.user_number = :usernumber) AND " +
                     "(:teamname is null or t.name = :teamname)", nativeQuery = true)
     List<User> findAllByQuery(@Param("firstname") String firstName,
                               @Param("lastname") String lastName,
                               @Param("username") String username,
-                              @Param("teamname") String teamname);
+                              @Param("teamname") String teamname,
+                              @Param("usernumber") String userNumber);
 }
