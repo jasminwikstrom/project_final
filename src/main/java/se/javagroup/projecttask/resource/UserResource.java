@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.User;
+import se.javagroup.projecttask.resource.dto.UserDto;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -11,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Path("/users")
@@ -59,7 +61,11 @@ public final class UserResource {
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") String id) {
-        return service.getUser(id).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
+        return service.getUser(id)
+                .map(UserDto::new)
+                .map(Response::ok)
+                .orElse(Response.status(Response.Status.NOT_FOUND))
+                .build();
     }
 
     @PUT
@@ -70,13 +76,15 @@ public final class UserResource {
 
 
     @GET
-    public List<User> getResult(
+    public List<UserDto> getResult(
             @QueryParam("firstname") String firstName,
             @QueryParam("lastname") String lastName,
             @QueryParam("username") String username,
             @QueryParam("teamname") String teamname) {
 
-        return service.getResult(firstName, lastName, username, teamname);
+        return service.getResult(firstName, lastName, username, teamname).stream()
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
     private URI locationOf(User user) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();

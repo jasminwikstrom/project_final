@@ -138,17 +138,26 @@ public final class Service {
         }
 
 
-        // skulle kunna validera username här också
-
         if (user.getUsername() == null) {
             throw new BadInputException("Username can not be null");
         }
+
+        validateUsernameLength(user.getUsername());
+
+
 
 
         //return userRepository.save(user);
         //NYTT från cla
         return userRepository.save(new User(user.getId(), user.getFirstName(),
                 user.getLastName(), user.getUsername(), user.getUserNumber(), user.isStatus(), user.getTeam()));
+    }
+
+    public String validateUsernameLength(String username) {
+        if (!(username.length() < 10))
+            return "valid";
+        else
+            throw new BadInputException("username must be 10 characters or more");
     }
 
 
@@ -218,14 +227,6 @@ public final class Service {
             workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
         }
         return workItems;
-    }
-
-    public String validateUsernameLength(String username) {
-        if (!(username.length() < 10))
-            return "valid";
-        else
-            throw new BadInputException("username must be 10 characters or more");
-
     }
 /*
     public Collection<WorkItem> getAllWorkItemsForUser(String id) {
