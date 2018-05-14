@@ -57,8 +57,8 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getResult(String firstName, String lastName, String username, String teamname) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
+    public List<User> getResult(String firstName, String lastName, String username, String teamname, String userNumber) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
 
     }
 
