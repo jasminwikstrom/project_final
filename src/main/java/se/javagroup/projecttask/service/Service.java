@@ -189,6 +189,7 @@ public final class Service {
                 .map(u -> {
                     u.setFirstName(user.getFirstName());
                     //return userRepository.save(u); LÄGG IN TEAM HÄR?
+                    u.setTeam(user.getTeam());
                     return userRepository.save(u);
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
