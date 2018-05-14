@@ -189,17 +189,19 @@ public final class Service {
 
     public User updateUser(String id, User user) {
 
-        return userRepository.findById(Long.valueOf(id))
-                .map(u -> {
-                    u.setTeam(user.getTeam());
-                    return userRepository.save(u);
-                }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
+        if(teamIsFull(user.getTeam().getId()) == true){
+            throw new BadInputException("This team is full. Choose another team.");
+        }
+
+            return userRepository.findById(Long.valueOf(id))
+                    .map(u -> {
+                        u.setTeam(user.getTeam());
+                        return userRepository.save(u);
+                    }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
+
     }
 
 
-    /*public List<User> getResult(String firstName, String lastName, String username, String teamname) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
-    }*/
     public List<User> getResult(String firstName, String lastName, String username, String teamname) {
 
         List<User> users = userRepository.findAll();
@@ -298,9 +300,7 @@ public final class Service {
             return "valid";
         else
             throw new BadInputException("username must be 10 characters or more");
-
     }
-
 
     private Long randomizedUserNumber() {
         Random random = new Random();
@@ -309,7 +309,7 @@ public final class Service {
         return randomII;
     }
 
-    private boolean checkUserNumber(Long usernumber) {  // använd autogenerateUserNumber tillsammans med detta
+    private boolean checkUserNumber(Long usernumber) {
         List<User> users = userRepository.findAll();
         List<Long> numbers = new ArrayList<>();
         boolean exists = true;
@@ -336,16 +336,17 @@ public final class Service {
         List<User> users = userRepository.findAll();
         Team team = teamRepository.getOne(teamId);
         int teammembers = 0;
-        boolean full = true;
+        boolean full = false;
 
-        if(teamId == null){
-            return false;
-        }
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeam().getId() == (team.getId())) {
-                teammembers++;
-            } else if (users.get(i).getTeam().getId() != (team.getId())) {
-                teammembers = 0;
+            if(users.get(i).getTeam() == null) {
+                users.get(i).setTeam(team);
+            }else {
+                if (users.get(i).getTeam().getId().equals(team.getId())) {
+                    teammembers++;
+                } else if (users.get(i).getTeam().getId() != team.getId()) {
+                    teammembers = 0;
+                }
             }
         }
         if (teammembers < 10) {
@@ -356,18 +357,9 @@ public final class Service {
         return full;
     }
 
-/*
-    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
-       // Collection<WorkItem> workitems = user.getWorkitems();
-        //return workitems;
-    }
-    */
-
     public Collection<WorkItem> getAllWorkItemsForUser(Optional<User> user) {
         return workItemRepository.findWorkItemsByUserId(user.get().getId());
-
     }
-
 
     public Optional<WorkItem> deleteWorkItem(Long id) {
         return  workItemRepository.findById(id).map( w -> {w.setUser(null); workItemRepository.save(w); workItemRepository.delete(w); return w;});
