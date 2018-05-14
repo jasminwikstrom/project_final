@@ -22,7 +22,7 @@ public class WorkItem {
     @JsonBackReference
     private User user;
     //@XmlTransient
-    @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "workItem", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private Issue issue;
 

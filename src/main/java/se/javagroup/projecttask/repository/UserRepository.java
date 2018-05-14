@@ -1,15 +1,12 @@
 //Repository
 package se.javagroup.projecttask.repository;
 
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import se.javagroup.projecttask.repository.data.User;
 
-import javax.ws.rs.PathParam;
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

@@ -35,10 +35,11 @@ public final class Service {
 
 
     public WorkItem createWorkItem(DtoWorkItem workItem) {
+
         if(workItem.getWorkItemStatus() == null){
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
-
         }
+
         if(workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
                 || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
                 || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
@@ -46,7 +47,7 @@ public final class Service {
         }
         throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
     }
-
+    
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId){
         Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
         Optional<User> userOptional = userRepository.findById(userId);
@@ -100,6 +101,7 @@ public final class Service {
     public Optional<Issue> createIssue(Issue issue, Long workItemID) {
 
         Optional<WorkItem> foundWorkItem = workItemRepository.findById(workItemID);
+
 
         if (foundWorkItem.isPresent()) {
             WorkItem oldWorkItem = foundWorkItem.get();
@@ -223,6 +225,7 @@ public final class Service {
         }
         return users;
     }
+
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
@@ -358,6 +361,11 @@ public final class Service {
     public Collection<WorkItem> getAllWorkItemsForUser(Optional<User> user) {
         return workItemRepository.findWorkItemsByUserId(user.get().getId());
 
+    }
+
+
+    public Optional<WorkItem> deleteWorkItem(Long id) {
+        return  workItemRepository.findById(id).map( w -> {w.setUser(null); workItemRepository.save(w); workItemRepository.delete(w); return w;});
     }
 
 

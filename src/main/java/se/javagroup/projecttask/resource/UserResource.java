@@ -55,7 +55,6 @@ public final class UserResource {
         return service.updateUser(id, user);
     }
 
-
     @GET
     public List<User> getResult(
             @QueryParam("firstname") String firstName,
@@ -74,6 +73,7 @@ public final class UserResource {
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
+
 
     private URI locationOf(User user) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
