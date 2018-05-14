@@ -146,19 +146,6 @@ public final class Service {
 
         if (validateUsernameLength(user.getUsername()).equals("valid"));
 
-            Long usernumber = randomizedUserNumber();
-            boolean numberexists = checkUserNumber(usernumber);
-
-            if (numberexists == true) {
-                usernumber = randomizedUserNumber();
-                numberexists = checkUserNumber(usernumber);
-                user.setUserNumber(usernumber);
-            }
-            if (numberexists == false) {
-                user.setUserNumber(usernumber);
-            }
-
-<<<<<<< HEAD
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
         if (numberexists == true) {
@@ -168,20 +155,11 @@ public final class Service {
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
-=======
->>>>>>> master
-
         if(user.getTeam() != null){
             if (teamIsFull(user.getTeam().getId()) == true) {
                 throw new BadInputException("This team is full. Choose another team.");
             }
         }
-
-
-        // check if user already exists in a team and if not if team is full
-
-        //return userRepository.save(user);
-        //NYTT från cla
         return userRepository.save(user);
     }
 
@@ -216,10 +194,6 @@ public final class Service {
                 }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
-
-    /*public List<User> getResult(String firstName, String lastName, String username, String teamname) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname);
-    }*/
     public List<User> getResult(String firstName, String lastName, String username, String teamname) {
 
         List<User> users = userRepository.findAll();
@@ -375,13 +349,6 @@ public final class Service {
         }
         return full;
     }
-
-/*
-    public Collection<WorkItem> getAllWorkItemsForUser(String id) {
-       // Collection<WorkItem> workitems = user.getWorkitems();
-        //return workitems;
-    }
-    */
 
     public Collection<WorkItem> getAllWorkItemsForUser(Optional<User> user) {
         return workItemRepository.findWorkItemsByUserId(user.get().getId());
