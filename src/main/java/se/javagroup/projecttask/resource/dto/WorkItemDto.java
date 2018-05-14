@@ -3,7 +3,7 @@ package se.javagroup.projecttask.resource.dto;
 import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.repository.data.User;
 
-public class DtoWorkItem {
+public class WorkItemDto {
 
     private Long id;
     private String description;
@@ -15,7 +15,7 @@ public class DtoWorkItem {
 
     private Issue issue;
 
-    public DtoWorkItem(String description, String workItemStatus, User user) {
+    public WorkItemDto(String description, String workItemStatus, User user) {
         this.description = description;
         this.workItemStatus = workItemStatus;
         this.user = user;
@@ -31,10 +31,6 @@ public class DtoWorkItem {
 
     public String getWorkItemStatus() {
         return workItemStatus;
-    }
-
-    public Long getWorkItemNumber() {
-        return workItemNumber;
     }
 
     public User getUser() {

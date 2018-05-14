@@ -30,9 +30,9 @@ public final class TeamResource {
     }
 
     @GET
-    @Path("{id}")
-    public Response getTeam(@PathParam("id") Long id) {
-        return Response.ok(service.getTeam(id)).build();
+    @Path("{teamId}")
+    public Response getTeam(@PathParam("teamId") Long teamId) {
+        return Response.ok(service.getTeam(teamId)).build();
     }
 
     @POST
@@ -41,15 +41,15 @@ public final class TeamResource {
     }
 
     @PUT
-    @Path("{id}")
-    public Team updateTeam(@PathParam("id") String id, Team team) {
-        return service.updateTeam(id, team);
+    @Path("{teamId}")
+    public Team updateTeam(@PathParam("teamId") Long teamId, Team team) {
+        return service.updateTeam(teamId, team);
     }
 
     @PUT
-    @Path("{teamID}/{userID}")
-    public Response addUserToTeam(@PathParam("teamID") Long teamID, @PathParam("userID") Long userID) {
-        User user = service.addUserToTeam(teamID, userID);
+    @Path("{teamId}/{userId}")
+    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userId") Long userId) {
+        User user = service.addUserToTeam(teamId, userId);
         return Response.ok(user).build();
     }
 
@@ -63,16 +63,16 @@ public final class TeamResource {
     }
 
     @GET
-    @Path("{id}/workitems")
-    public Response getWorkItemsForTeam(@PathParam("id") Long teamID) {
-        List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamID);
+    @Path("{teamId}/workitems")
+    public Response getWorkItemsForTeam(@PathParam("teamId") Long teamId) {
+        List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamId);
         return Response.ok(workItems).build();
     }
 
     @DELETE
-    @Path("{id}")
-    public Response deleteTeam(@PathParam("id") Long teamID) {
-        if (service.deleteTeam(teamID)) {
+    @Path("{teamId}")
+    public Response deleteTeam(@PathParam("teamId") Long teamId) {
+        if (service.deleteTeam(teamId)) {
             return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
@@ -81,5 +81,4 @@ public final class TeamResource {
     private URI locationOf(Team team) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
     }
-
 }

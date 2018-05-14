@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-
     @Query(value =
             "SELECT * FROM USER u " +
                     "JOIN TEAM t on t.id=u.team_id " +
@@ -22,6 +21,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
                               @Param("lastname") String lastName,
                               @Param("username") String username,
                               @Param("teamname") String teamname);
-
-
 }

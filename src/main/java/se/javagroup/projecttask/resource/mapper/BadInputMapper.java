@@ -14,6 +14,4 @@ public final class BadInputMapper implements ExceptionMapper<BadInputException> 
     public Response toResponse(BadInputException exception) {
         return Response.status(Response.Status.BAD_REQUEST).entity(Collections.singletonMap("error", exception.getMessage())).build();
     }
-
-
 }

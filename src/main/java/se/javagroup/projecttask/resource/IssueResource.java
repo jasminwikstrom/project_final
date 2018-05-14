@@ -20,7 +20,6 @@ import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public final class IssueResource {
-
     private final Service service;
 
     @Context
@@ -37,25 +36,24 @@ public final class IssueResource {
     }
 
     @GET
-    @Path("{id}")
-    public Response getIssue(@PathParam("id") Long id) {
-        return service.getIssue(id).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
+    @Path("{issueId}")
+    public Response getIssue(@PathParam("issueId") Long issueId) {
+        return service.getIssue(issueId).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
     }
 
     @PUT
-    @Path("{id}")
-    public Issue updateIssue(@PathParam("id") Long id, Issue issue) {
-        return service.updateIssue(id, issue);
+    @Path("{issueId}")
+    public Issue updateIssue(@PathParam("issueId") Long issueId, Issue issue) {
+        return service.updateIssue(issueId, issue);
     }
 
     @DELETE
-    @Path("{id}")
-    public Response deleteIssue(@PathParam("id") Long id) {
-        Optional<Issue> issue = service.getIssue(id);
+    @Path("{issueId}")
+    public Response deleteIssue(@PathParam("issueId") Long issueId) {
+        Optional<Issue> issue = service.getIssue(issueId);
         issue.ifPresent(i -> service.deleteIssue(i));
         return issue.map(i -> Response.status(NO_CONTENT)).orElse(Response.status(NOT_FOUND)).build();
     }
-
 
     private URI locationOf(Issue issue) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
