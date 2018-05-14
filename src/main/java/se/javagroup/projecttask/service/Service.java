@@ -15,7 +15,11 @@ import se.javagroup.projecttask.resource.dto.DtoWorkItem;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
+
+import java.util.*;
+
 import java.util.stream.Collectors;
 
 @Component
@@ -25,6 +29,7 @@ public final class Service {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
+    private static final AtomicLong usernumbers = new AtomicLong(100);
 
     public Service(IssueRepository issueRepository, TeamRepository teamRepository, UserRepository userRepository, WorkItemRepository workItemRepository) {
         this.issueRepository = issueRepository;
