@@ -11,8 +11,8 @@ public class Issue {
     private Long id;
     @Column(nullable = false)
     private String description;
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long issueNumber;
+    @Column(unique=true)
+    private String issueNumber;
     @OneToOne()
     @JsonBackReference
     private WorkItem workItem;
@@ -22,6 +22,12 @@ public class Issue {
 
     public Issue(String description, WorkItem workItem) {
         this.description = description;
+        this.workItem = workItem;
+    }
+
+    public Issue(String description, String issueNumber, WorkItem workItem) {
+        this.description = description;
+        this.issueNumber = issueNumber;
         this.workItem = workItem;
     }
 
@@ -39,14 +45,6 @@ public class Issue {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Long getIssueNumber() {
-        return issueNumber;
-    }
-
-    public void setIssueNumber(Long issueNumber) {
-        this.issueNumber = issueNumber;
     }
 
     public WorkItem getWorkItem() {

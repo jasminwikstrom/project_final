@@ -54,6 +54,7 @@ public final class WorkItemResource {
     public Response updateWorkItem(@PathParam("id") Long id, WorkItem workItem,
                                    @QueryParam("user") @DefaultValue("0") Long userId){
         return Response.status(NO_CONTENT).header("Location", locationOf(service.updateWorkItem(id, workItem, userId)).toString()).build();
+
     }
 
     private URI locationOf(WorkItem workItem) {
