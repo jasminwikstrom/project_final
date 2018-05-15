@@ -66,16 +66,20 @@ public final class Service {
         return userRepository.findById(Long.valueOf(userId));
     }
 
-    public User updateUser(String userId, User user) {
-        if (teamIsFull(user.getTeam().getId()) == true) {
-            throw new BadInputException("This team is full. Choose another team.");
-        }
-        return userRepository.findById(Long.valueOf(userId))
-                .map(u -> {
-                    u.setTeam(user.getTeam());
-                    return userRepository.save(u);
-                }).orElseThrow(() -> new BadInputException("User with id " + userId + " was not found"));
+    public User updateUser(String id, String firstName, String lastName, String username) {
+
+
+        return userRepository.findById(Long.valueOf(id))
+                .map(user -> {
+                    user.setFirstName(String.valueOf(firstName));
+                    user.setLastName(String.valueOf(lastName));
+                    user.setusername(String.valueOf(username));
+
+
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
+
 
     public boolean deleteUser(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);

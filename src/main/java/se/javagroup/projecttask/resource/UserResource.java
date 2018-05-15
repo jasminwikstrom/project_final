@@ -48,11 +48,14 @@ public final class UserResource {
         return service.getUser(userId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
+
     @PUT
-    @Path("{userId}")
-    public User updateUser(@PathParam("userId") String userId, User user) {
-        return service.updateUser(userId, user);
+    @Path("{id}")
+    public User updateUser(@PathParam("id") String id, String firstName, String lastName, String username) {
+        return service.updateUser(id, firstName, lastName, username);
     }
+
+
 
     @GET
     public List<User> getResult(

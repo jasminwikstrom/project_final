@@ -56,6 +56,11 @@ public class User {
         return firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+
     public String getLastName() {
         return lastName;
     }
@@ -87,4 +92,16 @@ public class User {
     public Collection<WorkItem> getWorkitems() {
         return workitems;
     }
+
+
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setusername(String username) {
+        this.username = username;
+    }
+
+
 }
