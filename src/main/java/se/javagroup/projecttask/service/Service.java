@@ -70,7 +70,7 @@ public final class Service {
         if (teamIsFull(user.getTeam().getId()) == true) {
             throw new BadInputException("This team is full. Choose another team.");
         }
-        return userRepository.findById(Long.valueOf(userId))
+                    return userRepository.findById(Long.valueOf(userId))
                 .map(u -> {
                     u.setTeam(user.getTeam());
                     return userRepository.save(u);

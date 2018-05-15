@@ -34,6 +34,7 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
+        this.userNumber = userNumber;
         this.status = status;
         this.team = team;
     }
