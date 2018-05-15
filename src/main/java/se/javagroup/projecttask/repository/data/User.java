@@ -65,8 +65,26 @@ public class User {
         return lastName;
     }
 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getUserNumber() {
@@ -95,13 +113,8 @@ public class User {
 
 
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
-    public void setusername(String username) {
-        this.username = username;
-    }
+
 
 
 }

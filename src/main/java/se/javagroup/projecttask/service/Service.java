@@ -66,14 +66,15 @@ public final class Service {
         return userRepository.findById(Long.valueOf(userId));
     }
 
-    public User updateUser(String id, String firstName, String lastName, String username) {
+    public User updateUser(String id, User user) {
 
 
         return userRepository.findById(Long.valueOf(id))
-                .map(user -> {
-                    user.setFirstName(String.valueOf(firstName));
-                    user.setLastName(String.valueOf(lastName));
-                    user.setusername(String.valueOf(username));
+                .map(u -> {
+                    u.setFirstName (user.getFirstName());
+                    u.setLastName(user.getLastName());
+                    u.setUsername(user.getUsername());
+                   u.setStatus(user.getStatus());
 
 
                     return userRepository.save(user);

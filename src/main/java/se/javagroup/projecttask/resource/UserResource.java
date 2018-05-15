@@ -51,8 +51,8 @@ public final class UserResource {
 
     @PUT
     @Path("{id}")
-    public User updateUser(@PathParam("id") String id, String firstName, String lastName, String username) {
-        return service.updateUser(id, firstName, lastName, username);
+    public User updateUser(@PathParam("id") String id, User user) {
+        return service.updateUser(id,  user);
     }
 
 
