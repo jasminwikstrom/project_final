@@ -134,7 +134,7 @@ public final class Service {
             }
             return workItems;
         }
-        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Optional<WorkItem> getWorkItem(Long workItemId) {
@@ -182,7 +182,7 @@ public final class Service {
         if (teamOptional.isPresent()) {
             return teamOptional.get();
         }
-        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Team updateTeam(Long teamId, Team team) {
@@ -217,7 +217,7 @@ public final class Service {
             teamRepository.delete(teamOptional.get());
             return true;
         }
-        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
