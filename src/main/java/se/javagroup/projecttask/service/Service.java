@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Component
 public final class Service {
     private final IssueRepository issueRepository;
-
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
