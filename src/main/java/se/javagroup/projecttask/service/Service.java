@@ -68,9 +68,9 @@ public final class Service {
     }
 
     public User updateUser(String userId, User user) {
-        if (teamIsFull(user.getTeam().getId()) == true) {
+       /* if (teamIsFull(user.getTeam().getId()) == true) {
             throw new BadInputException("This team is full. Choose another team.");
-        }
+        }*/
         return userRepository.findById(Long.valueOf(userId))
                 .map(u -> {
                     u.setTeam(user.getTeam());
@@ -203,6 +203,9 @@ public final class Service {
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
         }
+        if (teamIsFullTest(teamOptional.get()) == true) {
+            throw new BadInputException("This team is full. Choose another team.");
+        }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
                 user.getUserNumber(), user.isStatus(), teamOptional.get()));
@@ -267,40 +270,32 @@ public final class Service {
     }
 
     private boolean checkUserNumber(Long usernumber) {
-        List<User> users = userRepository.findAll();
-        List<Long> numbers = new ArrayList<>();
-        boolean exists = true;
-        if (users == null) {
-            return false;
+        for (User u : userRepository.findAll()) {
+            if (usernumber == u.getUserNumber()) {
+                return true;
+            }
         }
-        for (int i = 0; i < users.size(); i++) {
-            Long number = users.get(i).getUserNumber();
-            numbers.add(number);
+        return false;
+    }
+
+    private boolean teamIsFullTest(Team team) {
+        if (team.getUsers().size() >= 10) {
+            return true;
         }
-        for (int i = 0; i < numbers.size(); i++) {
-            if (usernumber == numbers.get(i)) {
-                exists = true;
-            } else
-                exists = false;
-        }
-        return exists;
+        return false;
     }
 
     private boolean teamIsFull(Long teamId) {
-        List<User> users = userRepository.findAll();
         Team team = teamRepository.getOne(teamId);
+        boolean full = true;
         int teamMembers = 0;
-        boolean full = false;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeam() == null) {
-                users.get(i).setTeam(team);
-            } else {
-                if (users.get(i).getTeam().getId().equals(team.getId())) {
-                    teamMembers++;
-                } else if (users.get(i).getTeam().getId() != team.getId()) {
-                    teamMembers = 0;
-                }
-            }
+        for (User u : userRepository.findAll()) {
+            if (u.getTeam() == null) {
+                u.setTeam(team);
+            } else if (u.getTeam().getId().equals(team.getId())) {
+                teamMembers++;
+            } else
+                teamMembers = 0;
         }
         if (teamMembers < 10) {
             full = false;
@@ -309,4 +304,5 @@ public final class Service {
         }
         return full;
     }
+
 }
