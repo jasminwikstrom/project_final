@@ -265,23 +265,12 @@ public final class Service {
     }
 
     private boolean checkUserNumber(Long usernumber) {
-        List<User> users = userRepository.findAll();
-        List<Long> numbers = new ArrayList<>();
-        boolean exists = true;
-        if (users == null) {
-            return false;
+        for(User u : userRepository.findAll()){
+            if(usernumber == u.getUserNumber()){
+                return true;
+            }
         }
-        for (int i = 0; i < users.size(); i++) {
-            Long number = users.get(i).getUserNumber();
-            numbers.add(number);
-        }
-        for (int i = 0; i < numbers.size(); i++) {
-            if (usernumber == numbers.get(i)) {
-                exists = true;
-            } else
-                exists = false;
-        }
-        return exists;
+        return false;
     }
 
     private boolean teamIsFull(Long teamId) {
