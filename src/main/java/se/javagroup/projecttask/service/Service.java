@@ -8,6 +8,7 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
+import se.javagroup.projecttask.service.exception.TeamNotFoundException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
 import java.util.*;
@@ -57,9 +58,8 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getResult(String firstName, String lastName, String username, String teamname, String userNumber) {
+    public List<User> getAllUsers(String firstName, String lastName, String username, String teamname, String userNumber) {
         return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
-
     }
 
     public Optional<User> getUser(String userId) {
@@ -135,7 +135,7 @@ public final class Service {
             }
             return workItems;
         }
-        throw new BadInputException("Team not found");
+        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
     }
 
     public Optional<WorkItem> getWorkItem(Long workItemId) {
@@ -171,7 +171,7 @@ public final class Service {
     }
 
     public Team createTeam(Team team) {
-        return teamRepository.save(new Team(team.getName(), team.isStatus(), team.getTeamNumber()));
+        return teamRepository.save(team);
     }
 
     public Iterable<Team> getAllTeams() {
@@ -183,7 +183,7 @@ public final class Service {
         if (teamOptional.isPresent()) {
             return teamOptional.get();
         }
-        throw new BadInputException("Team not found");
+        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
     }
 
     public Team updateTeam(Long teamId, Team team) {
@@ -193,7 +193,7 @@ public final class Service {
                     t.setStatus(team.isStatus());
                     t.setTeamNumber(team.getTeamNumber());
                     return teamRepository.save(t);
-                }).orElseThrow(() -> new BadInputException("Team with id " + teamId + " was not found"));
+                }).orElseThrow(() -> new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
     public User addUserToTeam(Long teamId, Long userId) {
@@ -218,7 +218,7 @@ public final class Service {
             teamRepository.delete(teamOptional.get());
             return true;
         }
-        return false;
+        throw new TeamNotFoundException(String.format("Team with id %s not found", teamId));
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
