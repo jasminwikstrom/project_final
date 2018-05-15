@@ -49,9 +49,9 @@ public final class UserResource {
     }
 
     @PUT
-    @Path("{userId}")
-    public User updateUser(@PathParam("userId") String userId, User user) {
-        return service.updateUser(userId, user);
+    @Path("{id}")
+    public User updateUser(@PathParam("id") String id, User user) {
+        return service.updateUser(id,  user);
     }
 
     @GET
