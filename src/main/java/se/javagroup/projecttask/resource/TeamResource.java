@@ -2,6 +2,8 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Team;
+import se.javagroup.projecttask.repository.data.User;
+import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -27,17 +29,28 @@ public final class TeamResource {
         this.service = service;
     }
 
+    @GET
+    @Path("{teamId}")
+    public Response getTeam(@PathParam("teamId") Long teamId) {
+        return Response.ok(service.getTeam(teamId)).build();
+    }
+
     @POST
     public Response createTeam(Team team) {
-        Team newTeam = new Team(team.getName(), team.isStatus(), team.getTeamNumber());
-        //service.createTeam(newTeam);
-        return Response.created(locationOf(service.createTeam(newTeam))).build();
+        return Response.created(locationOf(service.createTeam(team))).build();
     }
 
     @PUT
-    @Path("{id}")
-    public Team updateTeam(@PathParam("id") String id, Team team) {
-        return service.updateTeam(id, team);
+    @Path("{teamId}")
+    public Team updateTeam(@PathParam("teamId") Long teamId, Team team) {
+        return service.updateTeam(teamId, team);
+    }
+
+    @PUT
+    @Path("{teamId}/{userId}")
+    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userId") Long userId) {
+        User user = service.addUserToTeam(teamId, userId);
+        return Response.ok(user).build();
     }
 
     @GET
@@ -49,8 +62,23 @@ public final class TeamResource {
         return Response.ok(teams).build();
     }
 
+    @GET
+    @Path("{teamId}/workitems")
+    public Response getWorkItemsForTeam(@PathParam("teamId") Long teamId) {
+        List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamId);
+        return Response.ok(workItems).build();
+    }
+
+    @DELETE
+    @Path("{teamId}")
+    public Response deleteTeam(@PathParam("teamId") Long teamId) {
+        if (service.deleteTeam(teamId)) {
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
     private URI locationOf(Team team) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
     }
-
 }
