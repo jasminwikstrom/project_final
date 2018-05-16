@@ -51,7 +51,10 @@ public final class Service {
             user.setUserNumber(usernumber);
         }
         if (user.getTeam() != null) {
-            if (teamIsFull(user.getTeam().getId()) == true) {
+           /* if (teamIsFull(user.getTeam().getId()) == true) {
+                throw new BadInputException("This team is full. Choose another team.");
+            }*/
+            if (teamIsFullTest(user.getTeam()) == true) {
                 throw new BadInputException("This team is full. Choose another team.");
             }
         }
@@ -71,6 +74,9 @@ public final class Service {
        /* if (teamIsFull(user.getTeam().getId()) == true) {
             throw new BadInputException("This team is full. Choose another team.");
         }*/
+        if (teamIsFullTest(user.getTeam()) == true) {
+            throw new BadInputException("This team is full. Choose another team.");
+        }
         return userRepository.findById(Long.valueOf(userId))
                 .map(u -> {
                     u.setTeam(user.getTeam());
