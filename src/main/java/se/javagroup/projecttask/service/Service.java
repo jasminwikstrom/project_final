@@ -1,6 +1,5 @@
 package se.javagroup.projecttask.service;
 
-
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
@@ -9,6 +8,7 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
+import se.javagroup.projecttask.service.exception.TeamNotFoundException;
 import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
 import java.util.*;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Component
 public final class Service {
     private final IssueRepository issueRepository;
-
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
@@ -51,37 +50,30 @@ public final class Service {
             user.setUserNumber(usernumber);
         }
         if (user.getTeam() != null) {
-           /* if (teamIsFull(user.getTeam().getId()) == true) {
-                throw new BadInputException("This team is full. Choose another team.");
-            }*/
-            if (teamIsFullTest(user.getTeam()) == true) {
+            if (teamIsFull(user.getTeam().getId()) == true) {
                 throw new BadInputException("This team is full. Choose another team.");
             }
         }
         return userRepository.save(user);
     }
 
-    public List<User> getResult(String firstName, String lastName, String username, String teamname, String userNumber) {
+    public List<User> getAllUsers(String firstName, String lastName, String username, String teamname, String userNumber) {
         return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
-
     }
 
     public Optional<User> getUser(String userId) {
         return userRepository.findById(Long.valueOf(userId));
     }
 
-    public User updateUser(String userId, User user) {
-       /* if (teamIsFull(user.getTeam().getId()) == true) {
-            throw new BadInputException("This team is full. Choose another team.");
-        }*/
-        if (teamIsFullTest(user.getTeam()) == true) {
-            throw new BadInputException("This team is full. Choose another team.");
-        }
-        return userRepository.findById(Long.valueOf(userId))
+    public User updateUser(String id, User user) {
+        return userRepository.findById(Long.valueOf(id))
                 .map(u -> {
-                    u.setTeam(user.getTeam());
-                    return userRepository.save(u);
-                }).orElseThrow(() -> new BadInputException("User with id " + userId + " was not found"));
+                    u.setFirstName(user.getFirstName());
+                    u.setLastName(user.getLastName());
+                    u.setUsername(user.getUsername());
+                    u.setStatus(user.getStatus());
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
     }
 
     public boolean deleteUser(Long userId) {
@@ -142,7 +134,7 @@ public final class Service {
             }
             return workItems;
         }
-        throw new BadInputException("Team not found");
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Optional<WorkItem> getWorkItem(Long workItemId) {
@@ -178,7 +170,7 @@ public final class Service {
     }
 
     public Team createTeam(Team team) {
-        return teamRepository.save(new Team(team.getName(), team.isStatus(), team.getTeamNumber()));
+        return teamRepository.save(team);
     }
 
     public Iterable<Team> getAllTeams() {
@@ -190,7 +182,7 @@ public final class Service {
         if (teamOptional.isPresent()) {
             return teamOptional.get();
         }
-        throw new BadInputException("Team not found");
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Team updateTeam(Long teamId, Team team) {
@@ -200,7 +192,7 @@ public final class Service {
                     t.setStatus(team.isStatus());
                     t.setTeamNumber(team.getTeamNumber());
                     return teamRepository.save(t);
-                }).orElseThrow(() -> new BadInputException("Team with id " + teamId + " was not found"));
+                }).orElseThrow(() -> new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
     public User addUserToTeam(Long teamId, Long userId) {
@@ -208,9 +200,6 @@ public final class Service {
         Optional<User> userOptional = userRepository.findById(userId);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
-        }
-        if (teamIsFullTest(teamOptional.get()) == true) {
-            throw new BadInputException("This team is full. Choose another team.");
         }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
@@ -228,7 +217,7 @@ public final class Service {
             teamRepository.delete(teamOptional.get());
             return true;
         }
-        return false;
+        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
@@ -284,24 +273,21 @@ public final class Service {
         return false;
     }
 
-    private boolean teamIsFullTest(Team team) {
-        if (team.getUsers().size() >= 10) {
-            return true;
-        }
-        return false;
-    }
-
     private boolean teamIsFull(Long teamId) {
+        List<User> users = userRepository.findAll();
         Team team = teamRepository.getOne(teamId);
-        boolean full = true;
         int teamMembers = 0;
-        for (User u : userRepository.findAll()) {
-            if (u.getTeam() == null) {
-                u.setTeam(team);
-            } else if (u.getTeam().getId().equals(team.getId())) {
-                teamMembers++;
-            } else
-                teamMembers = 0;
+        boolean full = false;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getTeam() == null) {
+                users.get(i).setTeam(team);
+            } else {
+                if (users.get(i).getTeam().getId().equals(team.getId())) {
+                    teamMembers++;
+                } else if (users.get(i).getTeam().getId() != team.getId()) {
+                    teamMembers = 0;
+                }
+            }
         }
         if (teamMembers < 10) {
             full = false;
@@ -310,5 +296,4 @@ public final class Service {
         }
         return full;
     }
-
 }
