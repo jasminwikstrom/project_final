@@ -8,7 +8,6 @@ import se.javagroup.projecttask.repository.WorkItemRepository;
 import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
-import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -143,6 +142,29 @@ public final class Service {
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
+        WorkItem workItem = validateWorkItem(workItemId);
+        if (userExists(userId)) {
+            User user = userRepository.findById(userId).get();
+            if (maxWorkItemCount(user)) {
+                return workItem;
+            }
+            if (workItemNew == null) {
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        user));
+            }
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                    user));
+        }
+        if (workItemNew == null) {
+            return workItem;
+        }
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                workItem.getUser()));
+
+
+
+
+        /*
         Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
         Optional<User> userOptional = userRepository.findById(userId);
         if (workItemOptional.isPresent()) {
@@ -159,6 +181,7 @@ public final class Service {
             return workItem;
         }
         throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
+        */
     }
 
     public Optional<WorkItem> deleteWorkItem(Long workItemId) {
@@ -307,5 +330,27 @@ public final class Service {
             full = true;
         }
         return full;
+    }
+
+    private boolean maxWorkItemCount(User user) {
+        if (user.getWorkitems().size() >= 5) {
+            return true;
+        }
+        return false;
+    }
+
+    private WorkItem validateWorkItem(Long workItemId) {
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if (!workItem.isPresent()) {
+            throw new BadInputException("WorkItem not found");
+        }
+        return workItem.get();
+    }
+
+    private boolean userExists(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }
