@@ -65,15 +65,16 @@ public final class Service {
         return userRepository.findById(Long.valueOf(userId));
     }
 
-    public User updateUser(String id, User user) {
-        return userRepository.findById(Long.valueOf(id))
-                .map(u -> {
-                    u.setFirstName (user.getFirstName());
-                    u.setLastName(user.getLastName());
-                    u.setUsername(user.getUsername());
-                   u.setStatus(user.getStatus());
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new BadInputException("User with id " + id + " was not found"));
+    public Optional<User> getUserByUserNumber(Long userNumber) {
+        return userRepository.findByUserNumber(userNumber);
+    }
+
+    public User updateUser(Long userNumber, User user) {
+
+
+        return userRepository.findByUserNumber(Long.valueOf(userNumber))
+                .map(u -> userRepository.save(user))
+                .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
     }
 
     public boolean deleteUser(Long userId) {
