@@ -37,6 +37,7 @@ public class User {
         this.userNumber = userNumber;
         this.status = status;
         this.team = team;
+        this.userNumber = userNumber;
     }
 
     public User(String firstName, String lastName, String username) {

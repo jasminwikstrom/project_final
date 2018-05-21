@@ -9,6 +9,8 @@
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+target
+*.iml
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -115,5 +117,5 @@ $RECYCLE.BIN/
 *.lnk
 
 
-# End of https://www.gitignore.io/api/macos,windows,intellij# End of https://www.gitignore.io/api/macos,windows,intellij
+# End of https://www.gitignore.io/api/macos,windows,intellij
 src/main/resources/application.properties

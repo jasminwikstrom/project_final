@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import se.javagroup.projecttask.repository.data.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -23,4 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                               @Param("username") String username,
                               @Param("teamname") String teamname,
                               @Param("usernumber") String userNumber);
+
+    Optional<User> findByUserNumber(Long userNumber);
+
 }
