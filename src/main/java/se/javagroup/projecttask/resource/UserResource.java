@@ -36,14 +36,12 @@ public final class UserResource {
     }
 
     @GET
-    @Path("{userId}/workitems")
-    public Response getAllWorkItems(@PathParam("userId") String userId) {
-        Optional<User> user = service.getUser(userId);
+    @Path("{userNumber}/workitems")
+    public Response getAllWorkItems(@PathParam("userNumber") Long userNumber) {
+        Optional<User> user = service.getUserByUserNumber(userNumber);
         return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
 
-
-  
 
     @GET
     @Path("/{userNumber}")
