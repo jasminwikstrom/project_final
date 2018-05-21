@@ -143,22 +143,24 @@ public final class Service {
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
-        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (workItemOptional.isPresent()) {
-            WorkItem workItem = workItemOptional.get();
-            if (userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (workItemNew != null && !"".equals(workItemNew)) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+        WorkItem workItem = validateWorkItem(workItemId);
+        if (userExists(userId)) {
+            User user = userRepository.findById(userId).get();
+            if (maxWorkItemCount(user)) {
+                return workItem;
             }
+            if (workItemNew == null) {
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        user));
+            }
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                    user));
+        }
+        if (workItemNew == null) {
             return workItem;
         }
-        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                workItem.getUser()));
     }
 
     public Optional<WorkItem> deleteWorkItem(Long workItemId) {
@@ -296,5 +298,27 @@ public final class Service {
             full = true;
         }
         return full;
+    }
+
+    private boolean maxWorkItemCount(User user) {
+        if (user.getWorkitems().size() >= 5) {
+            return true;
+        }
+        return false;
+    }
+
+    private WorkItem validateWorkItem(Long workItemId) {
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if (!workItem.isPresent()) {
+            throw new BadInputException("WorkItem not found");
+        }
+        return workItem.get();
+    }
+
+    private boolean userExists(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }
