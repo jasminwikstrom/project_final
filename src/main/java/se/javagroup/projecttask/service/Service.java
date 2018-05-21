@@ -147,7 +147,7 @@ public final class Service {
         if (userExists(userId)) {
             User user = userRepository.findById(userId).get();
             if (maxWorkItemCount(user)) {
-                return workItem;
+                throw new BadInputException("Maximum amount of workitems reached for user");
             }
             if (workItemNew == null) {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
