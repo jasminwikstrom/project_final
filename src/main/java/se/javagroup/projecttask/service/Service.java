@@ -69,12 +69,18 @@ public final class Service {
         return userRepository.findByUserNumber(userNumber);
     }
 
-    public User updateUser(Long userNumber, User user) {
+    public void updateUser(Long userNumber, User user) {
 
 
-        return userRepository.findByUserNumber(Long.valueOf(userNumber))
-                .map(u -> userRepository.save(user))
+        User foundUser = userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
+
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setUsername(user.getUsername());
+        foundUser.setStatus(user.getStatus());
+
+        userRepository.save(foundUser);
     }
 
     public boolean deleteUser(Long userId) {
