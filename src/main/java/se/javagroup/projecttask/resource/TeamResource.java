@@ -47,9 +47,9 @@ public final class TeamResource {
     }
 
     @PUT
-    @Path("{teamId}/{userId}")
-    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userId") Long userId) {
-        User user = service.addUserToTeam(teamId, userId);
+    @Path("{teamId}/{userNumber}")
+    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userNumber") Long userNumber) {
+        User user = service.addUserToTeam(teamId, userNumber);
         return Response.ok(user).build();
     }
 

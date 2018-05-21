@@ -196,9 +196,10 @@ public final class Service {
                 }).orElseThrow(() -> new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
-    public User addUserToTeam(Long teamId, Long userId) {
+    public User addUserToTeam(Long teamId, Long userNumber) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        Optional<User> userOptional = userRepository.findById(userId);
+       // Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
         }
