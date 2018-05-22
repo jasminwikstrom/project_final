@@ -50,7 +50,6 @@ public final class Service {
 
     public User updateUser(Long userNumber, User user) {
         User foundUser = userRepository.findByUserNumber(userNumber).get();
-
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
