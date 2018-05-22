@@ -9,9 +9,6 @@ import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.NotFoundException;
-import se.javagroup.projecttask.service.exception.TeamNotFoundException;
-import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,24 +46,13 @@ public final class Service {
         return userRepository.findAllByQuery(firstName, lastName, userName, teamName, userNumber);
     }
 
-<<<<<<< HEAD
-=======
-    public User getUserByUserNumber(Long userNumber) {
-        Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
-        if(userOptional.isPresent()){
-            return userOptional.get();
-        }
-        throw new NotFoundException("User not found");
-    }
-
->>>>>>> master
     public User updateUser(Long userNumber, User user) {
         User foundUser = userRepository.findByUserNumber(userNumber).get();
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
         foundUser.setStatus(user.isStatus());
-<<<<<<< HEAD
+
             if(!foundUser.isStatus()){
                 Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
                 foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
@@ -76,13 +62,6 @@ public final class Service {
 
     public Optional<User> getUserByUserNumber(Long userNumber) {
         return userRepository.findByUserNumber(userNumber);
-=======
-        if(!foundUser.isStatus()){
-            Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
-            foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
-        }
-        return userRepository.save(foundUser);
->>>>>>> master
     }
 
     public void deleteUser(Long userNumber) {

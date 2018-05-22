@@ -42,8 +42,6 @@ public class User {
 
     public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
         this.id = id;
-<<<<<<< HEAD
-=======
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -52,7 +50,6 @@ public class User {
     }
 
     public User(String firstName, String lastName, String username) {
->>>>>>> master
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
