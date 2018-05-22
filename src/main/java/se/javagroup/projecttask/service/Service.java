@@ -65,18 +65,18 @@ public final class Service {
         return userRepository.findById(Long.valueOf(userId));
     }
 
-<<<<<<< HEAD
     public User updateUser(String userId, User user) {
 
         return userRepository.findById(Long.valueOf(userId))
                 .map(u -> {
-                    u.setFirstName (user.getFirstName());
+                    u.setFirstName(user.getFirstName());
                     u.setLastName(user.getLastName());
                     u.setUsername(user.getUsername());
-                   u.setStatus(user.getStatus());
+                    u.setStatus(user.getStatus());
                     return userRepository.save(user);
                 }).orElseThrow(() -> new BadInputException("User with id " + userId + " was not found"));
-=======
+    }
+
     public Optional<User> getUserByUserNumber(Long userNumber) {
         return userRepository.findByUserNumber(userNumber);
     }
@@ -93,7 +93,6 @@ public final class Service {
         foundUser.setStatus(user.getStatus());
 
         userRepository.save(foundUser);
->>>>>>> master
     }
 
     public boolean deleteUser(Long userId) {
