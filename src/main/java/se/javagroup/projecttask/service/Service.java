@@ -221,6 +221,7 @@ public final class Service {
 
     public boolean deleteTeam(Long teamId) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
+
         if (teamOptional.isPresent()) {
             Team team = teamOptional.get();
             for (User u : team.getUsers()) {
