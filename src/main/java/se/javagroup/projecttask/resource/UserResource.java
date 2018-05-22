@@ -37,20 +37,19 @@ public final class UserResource {
 
     @GET
     @Path("{userNumber}/workitems")
-    public Response getAllWorkItems(@PathParam("userNumber") Long userNumber) {
-        Optional<User> user = service.getUserByUserNumber(userNumber);
-        return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
+    public Response getAllWorkItemsForUser(@PathParam("userNumber") Long userNumber) {
+        return Response.ok(service.getAllWorkItemsForUser(userNumber)).build();
     }
 
 
     @GET
-    @Path("/{userNumber}")
-    public Response getUserByUnumber(@PathParam("userNumber") Long userNumber) {
-        return service.getUserByUserNumber(userNumber).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
+    @Path("{userNumber}")
+    public Response getUserByUserNumber(@PathParam("userNumber") Long userNumber) {
+        return Response.ok(service.getUserByUserNumber(userNumber)).build();
     }
 
     @PUT
-    @Path("/{userNumber}")
+    @Path("{userNumber}")
     public Response updateUser(@PathParam("userNumber") Long userNumber, User user) {
         service.updateUser(userNumber, user);
         return Response.noContent().build();
@@ -69,10 +68,8 @@ public final class UserResource {
     @DELETE
     @Path("{userNumber}")
     public Response deleteUser(@PathParam("userNumber") Long userNumber) {
-        if (service.deleteUser(userNumber)) {
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        service.deleteUser(userNumber);
+        return Response.noContent().build();
     }
 
     private URI locationOf(User user) {

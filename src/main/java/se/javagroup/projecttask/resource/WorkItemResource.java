@@ -59,7 +59,8 @@ public final class WorkItemResource {
     @DELETE
     @Path("{workItemId}")
     public Response deleteWorkItem(@PathParam("workItemId") Long workItemId) {
-        return service.deleteWorkItem(workItemId).map(w -> Response.status(NO_CONTENT)).orElse(Response.status(NOT_FOUND)).build();
+        service.deleteWorkItem(workItemId);
+        return Response.noContent().build();
     }
 
     private URI locationOf(WorkItem workItem) {
