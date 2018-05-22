@@ -145,7 +145,11 @@ public final class Service {
     }
 
     public Optional<WorkItem> getWorkItem(Long workItemId) {
-        return workItemRepository.findById(workItemId);
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if(workItem.isPresent()){
+            return workItem;
+        }
+        throw new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId));
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
@@ -174,8 +178,8 @@ public final class Service {
             w.setUser(null);
             workItemRepository.save(w);
             workItemRepository.delete(w);
-            return w;
-        });
+            return Optional.ofNullable(w);
+        }).orElseThrow(() -> new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId)));
     }
 
     public Team createTeam(Team team) {
