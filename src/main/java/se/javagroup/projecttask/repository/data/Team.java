@@ -28,14 +28,6 @@ public class Team {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
     public Collection<User> getUsers() {
         return users;
     }

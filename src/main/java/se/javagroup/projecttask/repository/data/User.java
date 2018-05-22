@@ -60,10 +60,6 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -78,10 +74,6 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public Boolean getStatus() {
-        return status;
     }
 
     public String getUsername() {
@@ -106,14 +98,6 @@ public class User {
 
     public void setStatus(Boolean status) {
         this.status = status;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public Collection<WorkItem> getWorkitems() {

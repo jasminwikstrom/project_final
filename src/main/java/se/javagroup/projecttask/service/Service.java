@@ -317,7 +317,10 @@ public final class Service {
         if (userRepository.findByUserNumber(userNumber).isPresent()) {
             return true;
         }
-        return false;
+        if(userNumber == 0){
+            return false;
+        }
+        throw new NotFoundException("User not found");
     }
 
     private void validateStatus(WorkItemDto workItem) {
