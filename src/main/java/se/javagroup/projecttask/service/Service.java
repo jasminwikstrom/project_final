@@ -86,20 +86,6 @@ public final class Service {
 
     }
 
-    private void validateStatus(WorkItemDto workItem) {
-        if(workItem.getWorkItemStatus() != null) {
-            Optional.ofNullable(workItem.getWorkItemStatus()).filter(status -> status.toUpperCase().equals("DONE")
-                    || status.toUpperCase().equals("UNSTARTED")
-                    || status.toUpperCase().equals("STARTED"))
-                    .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
-            /*if (!workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
-                    || !workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
-                    || !workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
-                throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
-            }*/
-        }
-    }
-
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
         List<WorkItem> workItems = workItemRepository.findAll();
         if (status == null && !issue && text == null) {
@@ -312,5 +298,14 @@ public final class Service {
             return true;
         }
         return false;
+    }
+
+    private void validateStatus(WorkItemDto workItem) {
+        if(workItem.getWorkItemStatus() != null) {
+            Optional.ofNullable(workItem.getWorkItemStatus()).filter(status -> status.toUpperCase().equals("DONE")
+                    || status.toUpperCase().equals("UNSTARTED")
+                    || status.toUpperCase().equals("STARTED"))
+                    .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
+        }
     }
 }
