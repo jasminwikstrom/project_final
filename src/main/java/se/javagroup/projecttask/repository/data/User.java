@@ -46,6 +46,15 @@ public class User {
         this.username = username;
     }
 
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.userNumber = userNumber;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

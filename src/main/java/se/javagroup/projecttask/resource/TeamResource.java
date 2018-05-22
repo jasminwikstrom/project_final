@@ -73,10 +73,6 @@ public final class TeamResource {
     public Response deleteTeam(@PathParam("teamId") Long teamId) {
         service.deleteTeam(teamId);
         return Response.noContent().build();
-        /*if (service.deleteTeam(teamId)) {
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();*/
     }
 
     private URI locationOf(Team team) {

@@ -52,22 +52,19 @@ public final class Service {
         return userRepository.findByUserNumber(userNumber);
     }
 
-    public void updateUser(Long userNumber, User user) {
-        User foundUser = userRepository.findByUserNumber(userNumber)
-                .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
+    public User updateUser(Long userNumber, User user) {
+        User foundUser = userRepository.findByUserNumber(userNumber).get();
+
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
-        foundUser.setStatus(user.getStatus());
-
-        userRepository.save(foundUser);
+        foundUser.setStatus(user.isStatus());
+            if(!foundUser.isStatus()){
+                Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
+                foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
+            }
+        return userRepository.save(foundUser);
     }
-
-   /* public Team updateTeam (Long teamId, Team team){
-        return teamRepository.findById(teamId)
-                .map(t -> teamRepository.save(team)).orElseThrow(() ->
-                        new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
-    }*/
 
     public boolean deleteUser(Long userNumber) {
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
@@ -177,7 +174,6 @@ public final class Service {
     }
 
     public Team getTeam (Long teamId){
-       // return teamRepository.findById(teamId);
         Optional<Team> teamOptional = teamRepository.findById(teamId);
         if(teamOptional.isPresent()){
             return teamOptional.get();
