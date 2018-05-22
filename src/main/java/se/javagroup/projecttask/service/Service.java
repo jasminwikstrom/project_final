@@ -97,15 +97,15 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItemDto workItem) {
-        if (workItem.getWorkItemStatus() == null) {
+        Optional<String> status = Optional.ofNullable(workItem.getWorkItemStatus());
+        if (!status.isPresent()){
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
-        if (workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
-                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
-                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
-            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
-        }
-        throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
+        return status.filter(s-> s.toUpperCase().equalsIgnoreCase("UNSTARTED")
+                || s.toUpperCase().equalsIgnoreCase("STARTED")
+                || s.toUpperCase().equalsIgnoreCase("DONE"))
+                .map(m -> workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(m.toUpperCase()))))
+                .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {

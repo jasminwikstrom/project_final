@@ -14,6 +14,7 @@ import java.net.URI;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import static javax.ws.rs.core.Response.Status.OK;
 
 @Path("workitems")
 @Component
@@ -38,7 +39,7 @@ public final class WorkItemResource {
     @GET
     @Path("{workItemId}")
     public Response getWorkItem(@PathParam("workItemId") Long workItemId) {
-        return service.getWorkItem(workItemId).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
+        return Response.ok(service.getWorkItem(workItemId)).build();
     }
 
     @GET
