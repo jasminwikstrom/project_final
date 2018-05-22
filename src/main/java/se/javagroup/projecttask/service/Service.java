@@ -63,6 +63,12 @@ public final class Service {
         userRepository.save(foundUser);
     }
 
+   /* public Team updateTeam (Long teamId, Team team){
+        return teamRepository.findById(teamId)
+                .map(t -> teamRepository.save(team)).orElseThrow(() ->
+                        new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
+    }*/
+
     public boolean deleteUser(Long userNumber) {
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (userOptional.isPresent()) {
@@ -124,10 +130,10 @@ public final class Service {
         throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
-    public Optional<WorkItem> getWorkItem(Long workItemId) {
+    public WorkItem getWorkItem(Long workItemId) {
         Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
         if(workItem.isPresent()){
-            return workItem;
+            return workItem.get();
         }
         throw new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId));
     }
@@ -170,8 +176,13 @@ public final class Service {
         return teamRepository.findAll();
     }
 
-    public Optional<Team> getTeam (Long teamId){
-        return teamRepository.findById(teamId);
+    public Team getTeam (Long teamId){
+       // return teamRepository.findById(teamId);
+        Optional<Team> teamOptional = teamRepository.findById(teamId);
+        if(teamOptional.isPresent()){
+            return teamOptional.get();
+        }
+        throw new BadInputException(String.format("Team with id %s was not found", teamId));
     }
 
     public Team updateTeam (Long teamId, Team team){
@@ -196,15 +207,16 @@ public final class Service {
                 user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
-    public boolean deleteTeam (Long teamId){
+    public void deleteTeam (Long teamId){
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        Collection<User> users = teamOptional.map(t -> t.getUsers()).orElseThrow(() ->
-                new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
-        users.stream().forEach(u -> userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(),
-                u.getUsername(), u.getUserNumber(), u.isStatus(),
-                null)));
+        if(!teamOptional.isPresent()){
+            throw new BadInputException("blä");
+        }
+        for (User u:teamOptional.get().getUsers()){
+            userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(),
+                    u.getUserNumber(), u.isStatus(), null));
+        }
         teamRepository.delete(teamOptional.get());
-        return true;
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {

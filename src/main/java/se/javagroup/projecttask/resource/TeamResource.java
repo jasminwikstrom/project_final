@@ -37,7 +37,10 @@ public final class TeamResource {
     @GET
     @Path("{teamId}")
     public Response getTeam(@PathParam("teamId") Long teamId) {
-        return service.getTeam(teamId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
+        //return service.getTeam(teamId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
+
+        return Response.ok(service.getTeam(teamId)).build();
+
     }
 
     @PUT
@@ -68,10 +71,12 @@ public final class TeamResource {
     @DELETE
     @Path("{teamId}")
     public Response deleteTeam(@PathParam("teamId") Long teamId) {
-        if (service.deleteTeam(teamId)) {
+        service.deleteTeam(teamId);
+        return Response.noContent().build();
+        /*if (service.deleteTeam(teamId)) {
             return Response.noContent().build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.NOT_FOUND).build();*/
     }
 
     private URI locationOf(Team team) {
