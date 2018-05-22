@@ -4,15 +4,11 @@ import se.javagroup.projecttask.repository.data.Issue;
 import se.javagroup.projecttask.repository.data.User;
 
 public class WorkItemDto {
-
     private Long id;
     private String description;
-
     private String workItemStatus;
-
     private Long workItemNumber;
     private User user;
-
     private Issue issue;
 
     public WorkItemDto(String description, String workItemStatus, User user) {

@@ -17,7 +17,6 @@ import java.net.URI;
 @Produces(MediaType.APPLICATION_JSON)
 public final class TeamResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 

@@ -43,8 +43,8 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers(String firstName, String lastName, String userName, String teamName, String userNumber) {
-        return userRepository.findAllByQuery(firstName, lastName, userName, teamName, userNumber);
+    public List<User> getAllUsers(String firstName, String lastName, String username, String teamName, String userNumber) {
+        return userRepository.findAllByQuery(firstName, lastName, username, teamName, userNumber);
     }
 
     public User getUserByUserNumber(Long userNumber) {
@@ -87,7 +87,6 @@ public final class Service {
         }
         validateStatus(workItem);
         return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
-
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
@@ -256,8 +255,8 @@ public final class Service {
         issueRepository.delete(issueOptional.get());
     }
 
-    private String validateUsernameLength(String userName) {
-        if (!(userName.length() < 10))
+    private String validateUsernameLength(String username) {
+        if (!(username.length() < 10))
             return "valid";
         else
             throw new BadInputException("username must be 10 characters or more");

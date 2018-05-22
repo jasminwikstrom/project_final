@@ -18,7 +18,6 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_JSON)
 public final class IssueResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 

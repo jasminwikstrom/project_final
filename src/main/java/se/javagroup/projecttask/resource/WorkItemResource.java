@@ -18,7 +18,6 @@ import java.net.URI;
 @Produces(MediaType.APPLICATION_JSON)
 public final class WorkItemResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 

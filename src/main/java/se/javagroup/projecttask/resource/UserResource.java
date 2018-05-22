@@ -19,7 +19,6 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public final class UserResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 
@@ -37,7 +36,6 @@ public final class UserResource {
     public Response getAllWorkItemsForUser(@PathParam("userNumber") Long userNumber) {
         return Response.ok(service.getAllWorkItemsForUser(userNumber)).build();
     }
-
 
     @GET
     @Path("{userNumber}")
