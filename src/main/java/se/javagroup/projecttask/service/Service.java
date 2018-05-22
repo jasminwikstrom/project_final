@@ -144,9 +144,7 @@ public final class Service {
         WorkItem workItem = validateWorkItem(workItemId);
         if (userExists(userNumber)) {
             User user = userRepository.findByUserNumber(userNumber).get();
-            if (maxWorkItemCount(user)) {
-                throw new BadInputException("Maximum amount of workitems reached for user");
-            }
+            validateWorkItemSize(user);
             if (workItemNew == null) {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
                         user));
@@ -303,11 +301,10 @@ public final class Service {
         return false;
     }
 
-    private boolean maxWorkItemCount(User user) {
-        if (user.getWorkitems().size() >= 5) {
-            return true;
+    private void validateWorkItemSize(User user) {
+        if(user.getWorkitems().size() >= 5){
+            throw new BadInputException("Maximum amount of workitems reached for user");
         }
-        return false;
     }
 
     private WorkItem validateWorkItem(Long workItemId) {
