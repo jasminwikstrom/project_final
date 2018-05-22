@@ -51,12 +51,8 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers(String firstName, String lastName, String username, String teamname, String userNumber) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
-    }
-
-    public Optional<User> getUser(String userId) {
-        return userRepository.findById(Long.valueOf(userId));
+    public List<User> getAllUsers(String firstName, String lastName, String userName, String teamName, String userNumber) {
+        return userRepository.findAllByQuery(firstName, lastName, userName, teamName, userNumber);
     }
 
     public Optional<User> getUserByUserNumber(Long userNumber) {
@@ -64,21 +60,17 @@ public final class Service {
     }
 
     public void updateUser(Long userNumber, User user) {
-
-
         User foundUser = userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
-
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
         foundUser.setStatus(user.getStatus());
-
         userRepository.save(foundUser);
     }
 
-    public boolean deleteUser(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public boolean deleteUser(Long userNumber) {
+        Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             for (WorkItem w : user.getWorkitems()) {

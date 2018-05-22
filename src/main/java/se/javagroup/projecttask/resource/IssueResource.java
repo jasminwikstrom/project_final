@@ -43,8 +43,9 @@ public final class IssueResource {
 
     @PUT
     @Path("{issueId}")
-    public Issue updateIssue(@PathParam("issueId") Long issueId, Issue issue) {
-        return service.updateIssue(issueId, issue);
+    public Response updateIssue(@PathParam("issueId") Long issueId, Issue issue) {
+        service.updateIssue(issueId, issue);
+        return Response.noContent().build();
     }
 
     @DELETE

@@ -34,24 +34,12 @@ public class Team {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Long getTeamNumber() {
         return teamNumber;
     }
 
-    public void setTeamNumber(Long teamNumber) {
-        this.teamNumber = teamNumber;
-    }
-
     public boolean isStatus() {
         return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     public Collection<User> getUsers() {

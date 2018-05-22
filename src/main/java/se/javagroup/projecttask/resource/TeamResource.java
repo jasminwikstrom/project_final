@@ -64,7 +64,6 @@ public final class TeamResource {
     @GET
     @Path("{teamId}/workitems")
     public Response getWorkItemsForTeam(@PathParam("teamId") Long teamId) {
-        //List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamId);//onödigt?
         return Response.ok(service.getAllWorkItemsForTeam(teamId)).build();
     }
 
@@ -79,9 +78,5 @@ public final class TeamResource {
 
     private URI locationOf(Team team) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
-    }
-
-    private URI locationOf(User user) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
 }

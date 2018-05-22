@@ -52,7 +52,8 @@ public final class WorkItemResource {
     @Path("{workItemId}")
     public Response updateWorkItem(@PathParam("workItemId") Long workItemId, WorkItem workItem,
                                    @QueryParam("user") @DefaultValue("0") Long userId) {
-        return Response.status(NO_CONTENT).header("Location", locationOf(service.updateWorkItem(workItemId, workItem, userId)).toString()).build();
+        service.updateWorkItem(workItemId, workItem, userId);
+        return Response.noContent().build();
     }
 
     @DELETE
