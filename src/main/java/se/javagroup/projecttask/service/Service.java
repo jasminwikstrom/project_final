@@ -49,11 +49,11 @@ public final class Service {
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
-        if (user.getTeam() != null) {
+        /*if (user.getTeam() != null) {//Ska ej vara här??
             if (teamIsFull(user.getTeam().getId()) == true) {
                 throw new BadInputException("This team is full. Choose another team.");
             }
-        }
+        }*/
         return userRepository.save(user);
     }
 
@@ -70,8 +70,6 @@ public final class Service {
     }
 
     public User updateUser(Long userNumber, User user) {
-
-
         return userRepository.findByUserNumber(Long.valueOf(userNumber))
                 .map(u -> userRepository.save(user))
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
@@ -178,30 +176,26 @@ public final class Service {
         return teamRepository.findAll();
     }
 
-    public Team getTeam(Long teamId) {
-        Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if (teamOptional.isPresent()) {
-            return teamOptional.get();
-        }
-        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
+    public Optional <Team> getTeam(Long teamId) {
+        return teamRepository.findById(teamId);
     }
 
     public Team updateTeam(Long teamId, Team team) {
         return teamRepository.findById(teamId)
-                .map(t -> {
-                    t.setName(team.getName());
-                    t.setStatus(team.isStatus());
-                    t.setTeamNumber(team.getTeamNumber());
-                    return teamRepository.save(t);
-                }).orElseThrow(() -> new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
+                .map(t -> teamRepository.save(team)).orElseThrow(() ->
+                        new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
     public User addUserToTeam(Long teamId, Long userNumber) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-       // Optional<User> userOptional = userRepository.findById(userId);
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
+        }
+        if(teamOptional.isPresent()){
+            if(teamIsFullTest(teamOptional.get())){
+                throw new BadInputException("Team is full");
+            }
         }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
@@ -210,16 +204,13 @@ public final class Service {
 
     public boolean deleteTeam(Long teamId) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if (teamOptional.isPresent()) {
-            Team team = teamOptional.get();
-            for (User u : team.getUsers()) {
-                userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(), u.getUserNumber(),
-                        u.isStatus(), null));
-            }
-            teamRepository.delete(teamOptional.get());
-            return true;
-        }
-        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
+        Collection<User> users = teamOptional.map(t -> t.getUsers()).orElseThrow(() ->
+                new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
+                users.stream().forEach(u -> userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(),
+                u.getUsername(), u.getUserNumber(), u.isStatus(),
+                null)));
+                teamRepository.delete(teamOptional.get());
+                return true;
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
@@ -258,6 +249,10 @@ public final class Service {
         else
             throw new BadInputException("username must be 10 characters or more");
     }
+   /* private void validateUsernameLength(String username){
+        Optional.ofNullable(username).filter(u -> u.length() > 10).orElseThrow(()->
+                new BadInputException("username must be 10 characters or more")); }
+*/
 
     private Long randomizedUserNumber() {
         Random random = new Random();
@@ -274,28 +269,12 @@ public final class Service {
         }
         return false;
     }
-
-    private boolean teamIsFull(Long teamId) {
-        List<User> users = userRepository.findAll();
-        Team team = teamRepository.getOne(teamId);
-        int teamMembers = 0;
-        boolean full = false;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeam() == null) {
-                users.get(i).setTeam(team);
-            } else {
-                if (users.get(i).getTeam().getId().equals(team.getId())) {
-                    teamMembers++;
-                } else if (users.get(i).getTeam().getId() != team.getId()) {
-                    teamMembers = 0;
-                }
+    private boolean teamIsFullTest(Team team){
+        if(team.getUsers() != null){
+            if (team.getUsers().size() >= 10){
+                return true;
             }
         }
-        if (teamMembers < 10) {
-            full = false;
-        } else if (teamMembers == 10) {
-            full = true;
-        }
-        return full;
+        return false;
     }
 }
