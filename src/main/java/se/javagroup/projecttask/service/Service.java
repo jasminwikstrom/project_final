@@ -9,7 +9,6 @@ import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.TeamNotFoundException;
-import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,11 +48,6 @@ public final class Service {
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
-        /*if (user.getTeam() != null) {//Ska ej vara här??
-            if (teamIsFull(user.getTeam().getId()) == true) {
-                throw new BadInputException("This team is full. Choose another team.");
-            }
-        }*/
         return userRepository.save(user);
     }
 
@@ -69,10 +63,18 @@ public final class Service {
         return userRepository.findByUserNumber(userNumber);
     }
 
-    public User updateUser(Long userNumber, User user) {
-        return userRepository.findByUserNumber(Long.valueOf(userNumber))
-                .map(u -> userRepository.save(user))
+    public void updateUser(Long userNumber, User user) {
+
+
+        User foundUser = userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
+
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setUsername(user.getUsername());
+        foundUser.setStatus(user.getStatus());
+
+        userRepository.save(foundUser);
     }
 
     public boolean deleteUser(Long userId) {
@@ -141,22 +143,24 @@ public final class Service {
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
-        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (workItemOptional.isPresent()) {
-            WorkItem workItem = workItemOptional.get();
-            if (userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (workItemNew != null && !"".equals(workItemNew)) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+        WorkItem workItem = validateWorkItem(workItemId);
+        if (userExists(userId)) {
+            User user = userRepository.findById(userId).get();
+            if (maxWorkItemCount(user)) {
+                throw new BadInputException("Maximum amount of workitems reached for user");
             }
+            if (workItemNew == null) {
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        user));
+            }
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                    user));
+        }
+        if (workItemNew == null) {
             return workItem;
         }
-        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                workItem.getUser()));
     }
 
     public Optional<WorkItem> deleteWorkItem(Long workItemId) {
@@ -168,32 +172,32 @@ public final class Service {
         });
     }
 
-    public Team createTeam(Team team) {
+    public Team createTeam (Team team){
         return teamRepository.save(team);
     }
 
-    public Iterable<Team> getAllTeams() {
+    public Iterable<Team> getAllTeams () {
         return teamRepository.findAll();
     }
 
-    public Optional <Team> getTeam(Long teamId) {
+    public Optional<Team> getTeam (Long teamId){
         return teamRepository.findById(teamId);
     }
 
-    public Team updateTeam(Long teamId, Team team) {
+    public Team updateTeam (Long teamId, Team team){
         return teamRepository.findById(teamId)
                 .map(t -> teamRepository.save(team)).orElseThrow(() ->
                         new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
-    public User addUserToTeam(Long teamId, Long userNumber) {
+    public User addUserToTeam (Long teamId, Long userNumber){
         Optional<Team> teamOptional = teamRepository.findById(teamId);
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
         }
-        if(teamOptional.isPresent()){
-            if(teamIsFullTest(teamOptional.get())){
+        if (teamOptional.isPresent()) {
+            if (teamIsFullTest(teamOptional.get())) {
                 throw new BadInputException("Team is full");
             }
         }
@@ -202,15 +206,15 @@ public final class Service {
                 user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
-    public boolean deleteTeam(Long teamId) {
+    public boolean deleteTeam (Long teamId){
         Optional<Team> teamOptional = teamRepository.findById(teamId);
         Collection<User> users = teamOptional.map(t -> t.getUsers()).orElseThrow(() ->
                 new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
-                users.stream().forEach(u -> userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(),
+        users.stream().forEach(u -> userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(),
                 u.getUsername(), u.getUserNumber(), u.isStatus(),
                 null)));
-                teamRepository.delete(teamOptional.get());
-                return true;
+        teamRepository.delete(teamOptional.get());
+        return true;
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
@@ -249,10 +253,6 @@ public final class Service {
         else
             throw new BadInputException("username must be 10 characters or more");
     }
-   /* private void validateUsernameLength(String username){
-        Optional.ofNullable(username).filter(u -> u.length() > 10).orElseThrow(()->
-                new BadInputException("username must be 10 characters or more")); }
-*/
 
     private Long randomizedUserNumber() {
         Random random = new Random();
@@ -269,11 +269,33 @@ public final class Service {
         }
         return false;
     }
-    private boolean teamIsFullTest(Team team){
-        if(team.getUsers() != null){
-            if (team.getUsers().size() >= 10){
+    private boolean teamIsFullTest (Team team){
+        if (team.getUsers() != null) {
+            if (team.getUsers().size() >= 10) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private boolean maxWorkItemCount(User user) {
+        if (user.getWorkitems().size() >= 5) {
+            return true;
+        }
+        return false;
+    }
+
+    private WorkItem validateWorkItem(Long workItemId) {
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if (!workItem.isPresent()) {
+            throw new BadInputException("WorkItem not found");
+        }
+        return workItem.get();
+    }
+
+    private boolean userExists(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            return true;
         }
         return false;
     }

@@ -31,7 +31,6 @@ public final class TeamResource {
         this.service = service;
     }
 
-
     @POST
     public Response createTeam(Team team) {
         return Response.created(locationOf(service.createTeam(team))).build();
@@ -59,7 +58,7 @@ public final class TeamResource {
 
     @GET
     public Response getAll() {
-     return Response.ok(service.getAllTeams()).build();
+        return Response.ok(service.getAllTeams()).build();
     }
 
     @GET
@@ -81,6 +80,7 @@ public final class TeamResource {
     private URI locationOf(Team team) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
     }
+
     private URI locationOf(User user) {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }

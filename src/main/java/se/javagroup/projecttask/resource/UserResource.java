@@ -36,14 +36,11 @@ public final class UserResource {
     }
 
     @GET
-    @Path("{userId}/workitems")
-    public Response getAllWorkItems(@PathParam("userId") String userId) {
-        Optional<User> user = service.getUser(userId);
+    @Path("{userNumber}/workitems")
+    public Response getAllWorkItems(@PathParam("userNumber") Long userNumber) {
+        Optional<User> user = service.getUserByUserNumber(userNumber);
         return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
-
-
-  
 
     @GET
     @Path("/{userNumber}")
@@ -52,9 +49,10 @@ public final class UserResource {
     }
 
     @PUT
-    @Path("{userNumber}")
-    public User updateUser(@PathParam("userNumber") Long userNumber, User user) {
-        return service.updateUser(userNumber,  user);
+    @Path("/{userNumber}")
+    public Response updateUser(@PathParam("userNumber") Long userNumber, User user) {
+        service.updateUser(userNumber, user);
+        return Response.ok().build();
     }
 
     @GET
@@ -81,7 +79,3 @@ public final class UserResource {
         return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
     }
 }
-
-
-
-
