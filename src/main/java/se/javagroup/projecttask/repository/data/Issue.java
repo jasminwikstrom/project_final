@@ -33,4 +33,8 @@ public class Issue {
         return workItem;
     }
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master

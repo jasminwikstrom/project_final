@@ -29,16 +29,8 @@ public final class Service {
     }
 
     public User createUser(User user) {
-        if (user.getFirstName() == null) {
-            throw new BadInputException("Firstname can not be null");
-        }
-        if (user.getLastName() == null) {
-            throw new BadInputException("Lastname can not be null");
-        }
-        if (user.getUsername() == null) {
-            throw new BadInputException("Username can not be null");
-        }
-        if (validateUsernameLength(user.getUsername()).equals("valid")) ;
+        validateName(user);
+        validateUsernameLength(user.getUsername());
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
         if (numberexists == true) {
@@ -49,20 +41,11 @@ public final class Service {
         if (numberexists == false) {
             user.setUserNumber(usernumber);
         }
-        if (user.getTeam() != null) {
-            if (teamIsFull(user.getTeam().getId()) == true) {
-                throw new BadInputException("This team is full. Choose another team.");
-            }
-        }
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers(String firstName, String lastName, String username, String teamname, String userNumber) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamname, userNumber);
-    }
-
-    public Optional<User> getUser(String userId) {
-        return userRepository.findById(Long.valueOf(userId));
+    public List<User> getAllUsers(String firstName, String lastName, String userName, String teamName, String userNumber) {
+        return userRepository.findAllByQuery(firstName, lastName, userName, teamName, userNumber);
     }
 
     public User updateUser(String userId, User user) {
@@ -84,7 +67,6 @@ public final class Service {
     public void updateUser(Long userNumber, User user) {
         User foundUser = userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
-
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
@@ -93,8 +75,8 @@ public final class Service {
         userRepository.save(foundUser);
     }
 
-    public boolean deleteUser(Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public boolean deleteUser(Long userNumber) {
+        Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             for (WorkItem w : user.getWorkitems()) {
@@ -107,15 +89,15 @@ public final class Service {
     }
 
     public WorkItem createWorkItem(WorkItemDto workItem) {
-        if (workItem.getWorkItemStatus() == null) {
+        Optional<String> status = Optional.ofNullable(workItem.getWorkItemStatus());
+        if (!status.isPresent()){
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
-        if (workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
-                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
-                || workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
-            return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
-        }
-        throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
+        return status.filter(s-> s.toUpperCase().equalsIgnoreCase("UNSTARTED")
+                || s.toUpperCase().equalsIgnoreCase("STARTED")
+                || s.toUpperCase().equalsIgnoreCase("DONE"))
+                .map(m -> workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(m.toUpperCase()))))
+                .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
@@ -155,13 +137,17 @@ public final class Service {
     }
 
     public Optional<WorkItem> getWorkItem(Long workItemId) {
-        return workItemRepository.findById(workItemId);
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if(workItem.isPresent()){
+            return workItem;
+        }
+        throw new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId));
     }
 
-    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
+    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userNumber) {
         WorkItem workItem = validateWorkItem(workItemId);
-        if (userExists(userId)) {
-            User user = userRepository.findById(userId).get();
+        if (userExists(userNumber)) {
+            User user = userRepository.findByUserNumber(userNumber).get();
             if (maxWorkItemCount(user)) {
                 throw new BadInputException("Maximum amount of workitems reached for user");
             }
@@ -184,59 +170,53 @@ public final class Service {
             w.setUser(null);
             workItemRepository.save(w);
             workItemRepository.delete(w);
-            return w;
-        });
+            return Optional.ofNullable(w);
+        }).orElseThrow(() -> new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId)));
     }
 
-    public Team createTeam(Team team) {
+    public Team createTeam (Team team){
         return teamRepository.save(team);
     }
 
-    public Iterable<Team> getAllTeams() {
+    public Iterable<Team> getAllTeams () {
         return teamRepository.findAll();
     }
 
-    public Team getTeam(Long teamId) {
-        Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if (teamOptional.isPresent()) {
-            return teamOptional.get();
-        }
-        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
+    public Optional<Team> getTeam (Long teamId){
+        return teamRepository.findById(teamId);
     }
 
-    public Team updateTeam(Long teamId, Team team) {
+    public Team updateTeam (Long teamId, Team team){
         return teamRepository.findById(teamId)
-                .map(t -> {
-                    t.setName(team.getName());
-                    t.setStatus(team.isStatus());
-                    t.setTeamNumber(team.getTeamNumber());
-                    return teamRepository.save(t);
-                }).orElseThrow(() -> new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
+                .map(t -> teamRepository.save(team)).orElseThrow(() ->
+                        new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
-    public User addUserToTeam(Long teamId, Long userId) {
+    public User addUserToTeam (Long teamId, Long userNumber){
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
             throw new BadInputException("Team or user doesn't exist");
+        }
+        if (teamOptional.isPresent()) {
+            if (teamIsFullTest(teamOptional.get())) {
+                throw new BadInputException("Team is full");
+            }
         }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
                 user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
-    public boolean deleteTeam(Long teamId) {
+    public boolean deleteTeam (Long teamId){
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if (teamOptional.isPresent()) {
-            Team team = teamOptional.get();
-            for (User u : team.getUsers()) {
-                userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(), u.getUserNumber(),
-                        u.isStatus(), null));
-            }
-            teamRepository.delete(teamOptional.get());
-            return true;
-        }
-        throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
+        Collection<User> users = teamOptional.map(t -> t.getUsers()).orElseThrow(() ->
+                new TeamNotFoundException(String.format("Team with id %s was not found", teamId)));
+        users.stream().forEach(u -> userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(),
+                u.getUsername(), u.getUserNumber(), u.isStatus(),
+                null)));
+        teamRepository.delete(teamOptional.get());
+        return true;
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
@@ -260,18 +240,33 @@ public final class Service {
         return issueRepository.findById(issueId)
                 .map(i -> issueRepository.save(issue)).orElseThrow(() ->
                         new BadInputException(String.format("Issue with id %s was not found", issueId)));
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     }
 
     public void deleteIssue(Issue issue) {
         issueRepository.deleteById(issue.getId());
     }
 
-    private String validateUsernameLength(String username) {
-        if (!(username.length() < 10))
+    private String validateUsernameLength(String userName) {
+        if (!(userName.length() < 10))
             return "valid";
         else
             throw new BadInputException("username must be 10 characters or more");
+    }
+
+    private void validateName(User user){
+        if (user.getFirstName() == null) {
+            throw new BadInputException("Firstname can not be null");
+        }
+        if (user.getLastName() == null) {
+            throw new BadInputException("Lastname can not be null");
+        }
+        if (user.getUsername() == null) {
+            throw new BadInputException("Username can not be null");
+        }
     }
 
     private Long randomizedUserNumber() {
@@ -281,37 +276,22 @@ public final class Service {
         return randomII;
     }
 
-    private boolean checkUserNumber(Long usernumber) {
+    private boolean checkUserNumber(Long userNumber) {
         for(User u : userRepository.findAll()){
-            if(usernumber == u.getUserNumber()){
+            if(userNumber == u.getUserNumber()){
                 return true;
             }
         }
         return false;
     }
 
-    private boolean teamIsFull(Long teamId) {
-        List<User> users = userRepository.findAll();
-        Team team = teamRepository.getOne(teamId);
-        int teamMembers = 0;
-        boolean full = false;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getTeam() == null) {
-                users.get(i).setTeam(team);
-            } else {
-                if (users.get(i).getTeam().getId().equals(team.getId())) {
-                    teamMembers++;
-                } else if (users.get(i).getTeam().getId() != team.getId()) {
-                    teamMembers = 0;
-                }
+    private boolean teamIsFullTest (Team team){
+        if (team.getUsers() != null) {
+            if (team.getUsers().size() >= 10) {
+                return true;
             }
         }
-        if (teamMembers < 10) {
-            full = false;
-        } else if (teamMembers == 10) {
-            full = true;
-        }
-        return full;
+        return false;
     }
 
     private boolean maxWorkItemCount(User user) {
@@ -329,8 +309,8 @@ public final class Service {
         return workItem.get();
     }
 
-    private boolean userExists(Long userId) {
-        if (userRepository.findById(userId).isPresent()) {
+    private boolean userExists(Long userNumber) {
+        if (userRepository.findByUserNumber(userNumber).isPresent()) {
             return true;
         }
         return false;
