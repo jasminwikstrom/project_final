@@ -10,8 +10,6 @@ public class Issue {
     private Long id;
     @Column(nullable = false)
     private String description;
-    @Column(unique = true)
-    private String issueNumber;
     @OneToOne()
     @JsonBackReference
     private WorkItem workItem;
@@ -23,33 +21,16 @@ public class Issue {
         this.workItem = workItem;
     }
 
-    public Issue(String description, String issueNumber, WorkItem workItem) {
-        this.description = description;
-        this.issueNumber = issueNumber;
-        this.workItem = workItem;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public WorkItem getWorkItem() {
         return workItem;
     }
 
-    public void setWorkItem(WorkItem workItem) {
-        this.workItem = workItem;
-    }
 }

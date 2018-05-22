@@ -82,8 +82,6 @@ public final class Service {
     }
 
     public void updateUser(Long userNumber, User user) {
-
-
         User foundUser = userRepository.findByUserNumber(userNumber)
                 .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
 
@@ -260,11 +258,9 @@ public final class Service {
 
     public Issue updateIssue(Long issueId, Issue issue) {
         return issueRepository.findById(issueId)
-                .map(i -> {
-                    i.setDescription(issue.getDescription());
-                    i.setWorkItem(issue.getWorkItem());
-                    return issueRepository.save(i);
-                }).orElseThrow(() -> new BadInputException("Issue with id " + issueId + " was not found"));
+                .map(i -> issueRepository.save(issue)).orElseThrow(() ->
+                        new BadInputException(String.format("Issue with id %s was not found", issueId)));
+
     }
 
     public void deleteIssue(Issue issue) {
