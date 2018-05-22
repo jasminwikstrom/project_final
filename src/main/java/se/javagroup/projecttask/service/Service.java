@@ -65,6 +65,7 @@ public final class Service {
         return userRepository.findById(Long.valueOf(userId));
     }
 
+<<<<<<< HEAD
     public User updateUser(String userId, User user) {
 
         return userRepository.findById(Long.valueOf(userId))
@@ -75,6 +76,24 @@ public final class Service {
                    u.setStatus(user.getStatus());
                     return userRepository.save(user);
                 }).orElseThrow(() -> new BadInputException("User with id " + userId + " was not found"));
+=======
+    public Optional<User> getUserByUserNumber(Long userNumber) {
+        return userRepository.findByUserNumber(userNumber);
+    }
+
+    public void updateUser(Long userNumber, User user) {
+
+
+        User foundUser = userRepository.findByUserNumber(userNumber)
+                .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
+
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setUsername(user.getUsername());
+        foundUser.setStatus(user.getStatus());
+
+        userRepository.save(foundUser);
+>>>>>>> master
     }
 
     public boolean deleteUser(Long userId) {
@@ -143,22 +162,24 @@ public final class Service {
     }
 
     public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userId) {
-        Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (workItemOptional.isPresent()) {
-            WorkItem workItem = workItemOptional.get();
-            if (userOptional.isPresent() && !(workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (userOptional.isPresent() && (workItemNew == null || "".equals(workItemNew))) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
-                        userOptional.get()));
-            } else if (workItemNew != null && !"".equals(workItemNew)) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus()));
+        WorkItem workItem = validateWorkItem(workItemId);
+        if (userExists(userId)) {
+            User user = userRepository.findById(userId).get();
+            if (maxWorkItemCount(user)) {
+                throw new BadInputException("Maximum amount of workitems reached for user");
             }
+            if (workItemNew == null) {
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
+                        user));
+            }
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                    user));
+        }
+        if (workItemNew == null) {
             return workItem;
         }
-        throw new WorkItemNotFoundException(String.format("WorkItem %s not found", workItemId));
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+                workItem.getUser()));
     }
 
     public Optional<WorkItem> deleteWorkItem(Long workItemId) {
@@ -296,5 +317,27 @@ public final class Service {
             full = true;
         }
         return full;
+    }
+
+    private boolean maxWorkItemCount(User user) {
+        if (user.getWorkitems().size() >= 5) {
+            return true;
+        }
+        return false;
+    }
+
+    private WorkItem validateWorkItem(Long workItemId) {
+        Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
+        if (!workItem.isPresent()) {
+            throw new BadInputException("WorkItem not found");
+        }
+        return workItem.get();
+    }
+
+    private boolean userExists(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }

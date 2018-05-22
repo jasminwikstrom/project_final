@@ -36,22 +36,24 @@ public final class UserResource {
     }
 
     @GET
-    @Path("{userId}/workitems")
-    public Response getAllWorkItems(@PathParam("userId") String userId) {
-        Optional<User> user = service.getUser(userId);
+    @Path("{userNumber}/workitems")
+    public Response getAllWorkItems(@PathParam("userNumber") Long userNumber) {
+        Optional<User> user = service.getUserByUserNumber(userNumber);
         return user.map(t -> Response.ok(service.getAllWorkItemsForUser(user))).orElse(Response.status(NOT_FOUND)).build();
     }
 
+
     @GET
-    @Path("/{userId}")
-    public Response getUser(@PathParam("userId") String userId) {
-        return service.getUser(userId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
+    @Path("/{userNumber}")
+    public Response getUserByUnumber(@PathParam("userNumber") Long userNumber) {
+        return service.getUserByUserNumber(userNumber).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
     @PUT
-    @Path("{id}")
-    public User updateUser(@PathParam("id") String id, User user) {
-        return service.updateUser(id,  user);
+    @Path("/{userNumber}")
+    public Response updateUser(@PathParam("userNumber") Long userNumber, User user) {
+        service.updateUser(userNumber, user);
+        return Response.ok().build();
     }
 
     @GET
