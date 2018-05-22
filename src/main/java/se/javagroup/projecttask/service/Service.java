@@ -81,11 +81,23 @@ public final class Service {
         if (!status.isPresent()){
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
-        return status.filter(s-> s.toUpperCase().equalsIgnoreCase("UNSTARTED")
-                || s.toUpperCase().equalsIgnoreCase("STARTED")
-                || s.toUpperCase().equalsIgnoreCase("DONE"))
-                .map(m -> workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(m.toUpperCase()))))
-                .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
+        validateStatus(workItem);
+        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
+
+    }
+
+    private void validateStatus(WorkItemDto workItem) {
+        if(workItem.getWorkItemStatus() != null) {
+            Optional.ofNullable(workItem.getWorkItemStatus()).filter(status -> status.toUpperCase().equals("DONE")
+                    || status.toUpperCase().equals("UNSTARTED")
+                    || status.toUpperCase().equals("STARTED"))
+                    .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
+            /*if (!workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("UNSTARTED")
+                    || !workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("STARTED")
+                    || !workItem.getWorkItemStatus().toUpperCase().equalsIgnoreCase("DONE")) {
+                throw new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type");
+            }*/
+        }
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
@@ -124,15 +136,15 @@ public final class Service {
         throw new TeamNotFoundException(String.format("Team with id %s was not found", teamId));
     }
 
-    public Optional<WorkItem> getWorkItem(Long workItemId) {
+    public WorkItem getWorkItem(Long workItemId) {
         Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
         if(workItem.isPresent()){
-            return workItem;
+            return workItem.get();
         }
         throw new WorkItemNotFoundException(String.format("WorkItem with id %s was not found", workItemId));
     }
 
-    public WorkItem updateWorkItem(Long workItemId, WorkItem workItemNew, Long userNumber) {
+    public WorkItem updateWorkItem(Long workItemId, WorkItemDto workItemNew, Long userNumber) {
         WorkItem workItem = validateWorkItem(workItemId);
         if (userExists(userNumber)) {
             User user = userRepository.findByUserNumber(userNumber).get();
@@ -143,13 +155,15 @@ public final class Service {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
                         user));
             }
-            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+            validateStatus(workItemNew);
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
                     user));
         }
         if (workItemNew == null) {
             return workItem;
         }
-        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), workItemNew.getWorkItemStatus(),
+        validateStatus(workItemNew);
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
                 workItem.getUser()));
     }
 

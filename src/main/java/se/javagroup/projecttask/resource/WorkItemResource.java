@@ -51,7 +51,7 @@ public final class WorkItemResource {
 
     @PUT
     @Path("{workItemId}")
-    public Response updateWorkItem(@PathParam("workItemId") Long workItemId, WorkItem workItem,
+    public Response updateWorkItem(@PathParam("workItemId") Long workItemId, WorkItemDto workItem,
                                    @QueryParam("user") @DefaultValue("0") Long userNumber) {
         service.updateWorkItem(workItemId, workItem, userNumber);
         return Response.noContent().build();
