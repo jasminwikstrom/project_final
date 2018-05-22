@@ -9,10 +9,6 @@ import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.NotFoundException;
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 import java.util.*;
 import java.util.stream.Collectors;
 
