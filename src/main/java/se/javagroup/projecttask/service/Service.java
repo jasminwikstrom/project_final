@@ -49,7 +49,7 @@ public final class Service {
 
     public User getUserByUserNumber(Long userNumber) {
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             return userOptional.get();
         }
         throw new NotFoundException("User not found");
@@ -61,7 +61,7 @@ public final class Service {
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
         foundUser.setStatus(user.isStatus());
-        if(!foundUser.isStatus()){
+        if (!foundUser.isStatus()) {
             Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
             foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
         }
@@ -70,7 +70,7 @@ public final class Service {
 
     public void deleteUser(Long userNumber) {
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
-        if(!userOptional.isPresent()){
+        if (!userOptional.isPresent()) {
             throw new NotFoundException("User not found");
         }
         User user = userOptional.get();
@@ -82,7 +82,7 @@ public final class Service {
 
     public WorkItem createWorkItem(WorkItemDto workItem) {
         Optional<String> status = Optional.ofNullable(workItem.getWorkItemStatus());
-        if (!status.isPresent()){
+        if (!status.isPresent()) {
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
         validateStatus(workItem);
@@ -110,7 +110,7 @@ public final class Service {
 
     public Collection<WorkItem> getAllWorkItemsForUser(Long userNumber) {
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
-        if(userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             return workItemRepository.findWorkItemsByUserId(userOptional.get().getId());
         }
         throw new NotFoundException("User not found");
@@ -132,7 +132,7 @@ public final class Service {
 
     public WorkItem getWorkItem(Long workItemId) {
         Optional<WorkItem> workItem = workItemRepository.findById(workItemId);
-        if(workItem.isPresent()){
+        if (workItem.isPresent()) {
             return workItem.get();
         }
         throw new NotFoundException(String.format("WorkItem with id %s was not found", workItemId));
@@ -162,7 +162,7 @@ public final class Service {
 
     public void deleteWorkItem(Long workItemId) {
         Optional<WorkItem> workItemOptional = workItemRepository.findById(workItemId);
-        if(!workItemOptional.isPresent()){
+        if (!workItemOptional.isPresent()) {
             throw new NotFoundException("Work item not found");
         }
         WorkItem workItem = workItemOptional.get();
@@ -171,29 +171,29 @@ public final class Service {
         workItemRepository.delete(workItem);
     }
 
-    public Team createTeam (Team team){
+    public Team createTeam(Team team) {
         return teamRepository.save(team);
     }
 
-    public Iterable<Team> getAllTeams () {
+    public Iterable<Team> getAllTeams() {
         return teamRepository.findAll();
     }
 
-    public Team getTeam (Long teamId){
+    public Team getTeam(Long teamId) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if(teamOptional.isPresent()){
+        if (teamOptional.isPresent()) {
             return teamOptional.get();
         }
         throw new NotFoundException("Team not found");
     }
 
-    public Team updateTeam (Long teamId, Team team){
+    public Team updateTeam(Long teamId, Team team) {
         return teamRepository.findById(teamId)
                 .map(t -> teamRepository.save(team)).orElseThrow(() ->
                         new NotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
-    public User addUserToTeam (Long teamId, Long userNumber){
+    public User addUserToTeam(Long teamId, Long userNumber) {
         Optional<Team> teamOptional = teamRepository.findById(teamId);
         Optional<User> userOptional = userRepository.findByUserNumber(userNumber);
         if (!teamOptional.isPresent() || !userOptional.isPresent()) {
@@ -209,14 +209,14 @@ public final class Service {
                 user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
-    public void deleteTeam (Long teamId){
+    public void deleteTeam(Long teamId) {
         Optional<Team> team = teamRepository.findById(teamId);
-        if(!team.isPresent()){
+        if (!team.isPresent()) {
             throw new NotFoundException("Team not found");
         }
-        for(User u : team.get().getUsers()){
+        for (User u : team.get().getUsers()) {
             userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(), u.getUserNumber(),
-                                u.isStatus(), null));
+                    u.isStatus(), null));
         }
         teamRepository.delete(team.get());
     }
@@ -236,7 +236,7 @@ public final class Service {
 
     public Issue getIssue(Long issueId) {
         Optional<Issue> issueOptional = issueRepository.findById(issueId);
-        if(!issueOptional.isPresent()){
+        if (!issueOptional.isPresent()) {
             throw new NotFoundException("Issue not found");
         }
         return issueOptional.get();
@@ -250,7 +250,7 @@ public final class Service {
 
     public void deleteIssue(Long issueId) {
         Optional<Issue> issueOptional = issueRepository.findById(issueId);
-        if(!issueOptional.isPresent()){
+        if (!issueOptional.isPresent()) {
             throw new NotFoundException("Issue not found");
         }
         issueRepository.delete(issueOptional.get());
@@ -263,7 +263,7 @@ public final class Service {
             throw new BadInputException("username must be 10 characters or more");
     }
 
-    private void validateName(User user){
+    private void validateName(User user) {
         if (user.getFirstName() == null) {
             throw new BadInputException("Firstname can not be null");
         }
@@ -283,15 +283,15 @@ public final class Service {
     }
 
     private boolean checkUserNumber(Long userNumber) {
-        for(User u : userRepository.findAll()){
-            if(userNumber == u.getUserNumber()){
+        for (User u : userRepository.findAll()) {
+            if (userNumber == u.getUserNumber()) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean teamIsFullTest (Team team){
+    private boolean teamIsFullTest(Team team) {
         if (team.getUsers() != null) {
             if (team.getUsers().size() >= 10) {
                 return true;
@@ -301,7 +301,7 @@ public final class Service {
     }
 
     private void validateWorkItemSize(User user) {
-        if(user.getWorkitems().size() >= 5){
+        if (user.getWorkitems().size() >= 5) {
             throw new BadInputException("Maximum amount of workitems reached for user");
         }
     }
@@ -322,7 +322,7 @@ public final class Service {
     }
 
     private void validateStatus(WorkItemDto workItem) {
-        if(workItem.getWorkItemStatus() != null) {
+        if (workItem.getWorkItemStatus() != null) {
             Optional.ofNullable(workItem.getWorkItemStatus()).filter(status -> status.toUpperCase().equals("DONE")
                     || status.toUpperCase().equals("UNSTARTED")
                     || status.toUpperCase().equals("STARTED"))
@@ -330,8 +330,8 @@ public final class Service {
         }
     }
 
-    private void validateUserStatus(User user){
-        if(!user.isStatus()){
+    private void validateUserStatus(User user) {
+        if (!user.isStatus()) {
             throw new BadInputException("Can not add work item to inactive user");
         }
     }

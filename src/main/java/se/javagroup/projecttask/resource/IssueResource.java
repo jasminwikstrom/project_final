@@ -12,9 +12,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Optional;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.NO_CONTENT;
-
 @Path("issues")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)

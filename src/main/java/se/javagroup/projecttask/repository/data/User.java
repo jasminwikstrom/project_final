@@ -27,7 +27,8 @@ public class User {
     @JsonManagedReference
     private Collection<WorkItem> workitems;
 
-    protected User() {}
+    protected User() {
+    }
 
     public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status, Team team) {
         this.id = id;
@@ -83,10 +84,6 @@ public class User {
         return status;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -105,6 +102,10 @@ public class User {
 
     public boolean isStatus() {
         return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
     public Team getTeam() {

@@ -2,8 +2,6 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Team;
-import se.javagroup.projecttask.repository.data.User;
-import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -12,8 +10,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("teams")
 @Component

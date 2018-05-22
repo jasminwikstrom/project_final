@@ -12,10 +12,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.NO_CONTENT;
-import static javax.ws.rs.core.Response.Status.OK;
-
 @Path("workitems")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
@@ -56,6 +52,7 @@ public final class WorkItemResource {
         service.updateWorkItem(workItemId, workItem, userNumber);
         return Response.noContent().build();
     }
+
     @DELETE
     @Path("{workItemId}")
     public Response deleteWorkItem(@PathParam("workItemId") Long workItemId) {

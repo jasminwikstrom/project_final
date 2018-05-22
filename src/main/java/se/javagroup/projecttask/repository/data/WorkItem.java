@@ -22,7 +22,8 @@ public class WorkItem {
     @JsonManagedReference
     private Issue issue;
 
-    protected WorkItem() {}
+    protected WorkItem() {
+    }
 
     public WorkItem(String description, WorkItemStatus workItemStatus) {
         this.description = description;
