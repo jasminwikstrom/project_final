@@ -138,6 +138,7 @@ public final class Service {
         WorkItem workItem = validateWorkItem(workItemId);
         if (userExists(userNumber)) {
             User user = userRepository.findByUserNumber(userNumber).get();
+            validateUserStatus(user);
             validateWorkItemSize(user);
             if (workItemNew == null) {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
@@ -322,6 +323,12 @@ public final class Service {
                     || status.toUpperCase().equals("UNSTARTED")
                     || status.toUpperCase().equals("STARTED"))
                     .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
+        }
+    }
+
+    private void validateUserStatus(User user){
+        if(!user.isStatus()){
+            throw new BadInputException("Can not add work item to inactive user");
         }
     }
 }
