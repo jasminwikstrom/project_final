@@ -48,31 +48,22 @@ public final class Service {
         return userRepository.findAllByQuery(firstName, lastName, userName, teamName, userNumber);
     }
 
-    public User updateUser(String userId, User user) {
+    public User updateUser(Long userNumber, User user) {
+        User foundUser = userRepository.findByUserNumber(userNumber).get();
 
-        return userRepository.findById(Long.valueOf(userId))
-                .map(u -> {
-                    u.setFirstName(user.getFirstName());
-                    u.setLastName(user.getLastName());
-                    u.setUsername(user.getUsername());
-                    u.setStatus(user.getStatus());
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new BadInputException("User with id " + userId + " was not found"));
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setUsername(user.getUsername());
+        foundUser.setStatus(user.isStatus());
+            if(!foundUser.isStatus()){
+                Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
+                foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
+            }
+        return userRepository.save(foundUser);
     }
 
     public Optional<User> getUserByUserNumber(Long userNumber) {
         return userRepository.findByUserNumber(userNumber);
-    }
-
-    public void updateUser(Long userNumber, User user) {
-        User foundUser = userRepository.findByUserNumber(userNumber)
-                .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
-        foundUser.setFirstName(user.getFirstName());
-        foundUser.setLastName(user.getLastName());
-        foundUser.setUsername(user.getUsername());
-        foundUser.setStatus(user.getStatus());
-
-        userRepository.save(foundUser);
     }
 
     public boolean deleteUser(Long userNumber) {
@@ -240,10 +231,6 @@ public final class Service {
         return issueRepository.findById(issueId)
                 .map(i -> issueRepository.save(issue)).orElseThrow(() ->
                         new BadInputException(String.format("Issue with id %s was not found", issueId)));
-<<<<<<< HEAD
-
-=======
->>>>>>> master
     }
 
     public void deleteIssue(Issue issue) {

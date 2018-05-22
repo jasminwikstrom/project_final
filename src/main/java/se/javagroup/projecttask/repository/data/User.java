@@ -40,10 +40,13 @@ public class User {
         this.userNumber = userNumber;
     }
 
-    public User(String firstName, String lastName, String username) {
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
+        this.userNumber = userNumber;
+        this.status = status;
     }
 
     public Long getId() {
@@ -70,10 +73,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Boolean getStatus() {
-        return status;
-    }
-
     public void setStatus(Boolean status) {
         this.status = status;
     }
@@ -96,14 +95,6 @@ public class User {
 
     public boolean isStatus() {
         return status;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public Collection<WorkItem> getWorkitems() {

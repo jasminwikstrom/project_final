@@ -62,6 +62,10 @@ public class WorkItem {
         this.user = user;
     }
 
+    public void setWorkItemStatus(WorkItemStatus workItemStatus) {
+        this.workItemStatus = workItemStatus;
+    }
+
     public Issue getIssue() {
         return issue;
     }
