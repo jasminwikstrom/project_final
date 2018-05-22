@@ -29,44 +29,40 @@ public final class TeamResource {
         this.service = service;
     }
 
-    @GET
-    @Path("{teamId}")
-    public Response getTeam(@PathParam("teamId") Long teamId) {
-        return Response.ok(service.getTeam(teamId)).build();
-    }
-
     @POST
     public Response createTeam(Team team) {
         return Response.created(locationOf(service.createTeam(team))).build();
     }
 
-    @PUT
+    @GET
     @Path("{teamId}")
-    public Team updateTeam(@PathParam("teamId") Long teamId, Team team) {
-        return service.updateTeam(teamId, team);
+    public Response getTeam(@PathParam("teamId") Long teamId) {
+        return service.getTeam(teamId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
     }
 
     @PUT
-    @Path("{teamId}/{userId}")
-    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userId") Long userId) {
-        User user = service.addUserToTeam(teamId, userId);
-        return Response.ok(user).build();
+    @Path("{teamId}")
+    public Response updateTeam(@PathParam("teamId") Long teamId, Team team) {
+        service.updateTeam(teamId, team);
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("{teamId}/{userNumber}")
+    public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userNumber") Long userNumber) {
+        service.addUserToTeam(teamId, userNumber);
+        return Response.noContent().build();
     }
 
     @GET
     public Response getAll() {
-        List<Team> teams = new ArrayList<>();
-        for (Team t : service.getAllTeams()) {
-            teams.add(t);
-        }
-        return Response.ok(teams).build();
+        return Response.ok(service.getAllTeams()).build();
     }
 
     @GET
     @Path("{teamId}/workitems")
     public Response getWorkItemsForTeam(@PathParam("teamId") Long teamId) {
-        List<WorkItem> workItems = service.getAllWorkItemsForTeam(teamId);
-        return Response.ok(workItems).build();
+        return Response.ok(service.getAllWorkItemsForTeam(teamId)).build();
     }
 
     @DELETE

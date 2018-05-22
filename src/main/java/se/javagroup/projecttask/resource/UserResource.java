@@ -53,34 +53,29 @@ public final class UserResource {
     @Path("/{userNumber}")
     public Response updateUser(@PathParam("userNumber") Long userNumber, User user) {
         service.updateUser(userNumber, user);
-        return Response.ok().build();
+        return Response.noContent().build();
     }
 
     @GET
-    public List<User> getResult(
+    public List<User> getUsers(
             @QueryParam("firstname") String firstName,
             @QueryParam("lastname") String lastName,
-            @QueryParam("username") String username,
-            @QueryParam("usernumber") String usernumber,
-            @QueryParam("teamname") String teamname) {
-
-        return service.getAllUsers(firstName, lastName, username, teamname, usernumber);
+            @QueryParam("username") String userName,
+            @QueryParam("usernumber") String userNumber,
+            @QueryParam("teamname") String teamName) {
+        return service.getAllUsers(firstName, lastName, userName, teamName, userNumber);
     }
 
     @DELETE
-    @Path("{userId}")
-    public Response deleteUser(@PathParam("userId") Long userId) {
-        if (service.deleteUser(userId)) {
+    @Path("{userNumber}")
+    public Response deleteUser(@PathParam("userNumber") Long userNumber) {
+        if (service.deleteUser(userNumber)) {
             return Response.noContent().build();
         }
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
     private URI locationOf(User user) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getId().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getUserNumber().toString()).build();
     }
 }
-
-
-
-
