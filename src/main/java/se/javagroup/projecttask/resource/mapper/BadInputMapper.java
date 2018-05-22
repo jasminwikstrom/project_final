@@ -7,10 +7,12 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.Collections;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+
 @Provider
 public final class BadInputMapper implements ExceptionMapper<BadInputException> {
     @Override
-    public Response toResponse(BadInputException exception) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(Collections.singletonMap("error", exception.getMessage())).build();
+    public Response toResponse(BadInputException e) {
+        return Response.status(BAD_REQUEST).entity(Collections.singletonMap("error", e.getMessage())).build();
     }
 }

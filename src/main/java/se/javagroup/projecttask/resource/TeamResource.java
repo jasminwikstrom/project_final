@@ -68,6 +68,7 @@ public final class TeamResource {
     }
 
     private URI locationOf(Team team) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(team.getId().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(team.getId().toString()).build();
     }
 }

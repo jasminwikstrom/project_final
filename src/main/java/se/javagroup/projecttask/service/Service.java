@@ -20,7 +20,8 @@ public final class Service {
     private final UserRepository userRepository;
     private final WorkItemRepository workItemRepository;
 
-    public Service(IssueRepository issueRepository, TeamRepository teamRepository, UserRepository userRepository, WorkItemRepository workItemRepository) {
+    public Service(IssueRepository issueRepository, TeamRepository teamRepository, UserRepository userRepository,
+                   WorkItemRepository workItemRepository) {
         this.issueRepository = issueRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
@@ -43,7 +44,8 @@ public final class Service {
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers(String firstName, String lastName, String username, String teamName, String userNumber) {
+    public List<User> getAllUsers(String firstName, String lastName, String username, String teamName,
+                                  String userNumber) {
         return userRepository.findAllByQuery(firstName, lastName, username, teamName, userNumber);
     }
 
@@ -63,7 +65,8 @@ public final class Service {
         foundUser.setStatus(user.isStatus());
         if (!foundUser.isStatus()) {
             Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
-            foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
+            foundWorkItems.forEach(w -> workItemRepository
+                    .save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
         }
         return userRepository.save(foundUser);
     }
@@ -86,7 +89,8 @@ public final class Service {
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
         validateStatus(workItem);
-        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.valueOf(workItem.getWorkItemStatus().toUpperCase())));
+        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus
+                .valueOf(workItem.getWorkItemStatus().toUpperCase())));
     }
 
     public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
@@ -99,7 +103,8 @@ public final class Service {
         }
         if (status != null) {
 
-            workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status)).collect(Collectors.toList());
+            workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status))
+                                 .collect(Collectors.toList());
         }
         if (text != null) {
             workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
@@ -144,19 +149,20 @@ public final class Service {
             validateUserStatus(user);
             validateWorkItemSize(user);
             if (workItemNew == null) {
-                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(), workItem.getWorkItemStatus(),
-                        user));
+                return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(),
+                                                            workItem.getWorkItemStatus(), user));
             }
             validateStatus(workItemNew);
-            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
-                    user));
+            return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(),
+                                                        WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()), user));
         }
         if (workItemNew == null) {
             return workItem;
         }
         validateStatus(workItemNew);
-        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(), WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
-                workItem.getUser()));
+        return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(),
+                                                    WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
+                                                    workItem.getUser()));
     }
 
     public void deleteWorkItem(Long workItemId) {
@@ -187,9 +193,8 @@ public final class Service {
     }
 
     public Team updateTeam(Long teamId, Team team) {
-        return teamRepository.findById(teamId)
-                .map(t -> teamRepository.save(team)).orElseThrow(() ->
-                        new NotFoundException(String.format("Team with id %s was not found", teamId)));
+        return teamRepository.findById(teamId).map(t -> teamRepository.save(team)).orElseThrow(
+                () -> new NotFoundException(String.format("Team with id %s was not found", teamId)));
     }
 
     public User addUserToTeam(Long teamId, Long userNumber) {
@@ -205,7 +210,7 @@ public final class Service {
         }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
-                user.getUserNumber(), user.isStatus(), teamOptional.get()));
+                                            user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
     public void deleteTeam(Long teamId) {
@@ -214,8 +219,8 @@ public final class Service {
             throw new NotFoundException("Team not found");
         }
         for (User u : team.get().getUsers()) {
-            userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(), u.getUserNumber(),
-                    u.isStatus(), null));
+            userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(),
+                                         u.getUserNumber(), u.isStatus(), null));
         }
         teamRepository.delete(team.get());
     }
@@ -225,8 +230,10 @@ public final class Service {
         if (foundWorkItem.isPresent()) {
             WorkItem oldWorkItem = foundWorkItem.get();
             if (oldWorkItem.getWorkItemStatus().toString().equals("DONE")) {
-                Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(), issue.getWorkItem())));
-                workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(), WorkItemStatus.UNSTARTED));
+                Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(),
+                                                                                      issue.getWorkItem())));
+                workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(),
+                                                     WorkItemStatus.UNSTARTED));
                 return newIssue;
             }
         }
@@ -242,9 +249,8 @@ public final class Service {
     }
 
     public Issue updateIssue(Long issueId, Issue issue) {
-        return issueRepository.findById(issueId)
-                .map(i -> issueRepository.save(issue)).orElseThrow(() ->
-                        new NotFoundException(String.format("Issue with id %s was not found", issueId)));
+        return issueRepository.findById(issueId).map(i -> issueRepository.save(issue)).orElseThrow(
+                () -> new NotFoundException(String.format("Issue with id %s was not found", issueId)));
     }
 
     public void deleteIssue(Long issueId) {
@@ -256,10 +262,8 @@ public final class Service {
     }
 
     private String validateUsernameLength(String username) {
-        if (!(username.length() < 10))
-            return "valid";
-        else
-            throw new BadInputException("username must be 10 characters or more");
+        if (!(username.length() < 10)) return "valid";
+        else throw new BadInputException("username must be 10 characters or more");
     }
 
     private void validateName(User user) {
@@ -317,7 +321,7 @@ public final class Service {
         if (userRepository.findByUserNumber(userNumber).isPresent()) {
             return true;
         }
-        if(userNumber == 0){
+        if (userNumber == 0) {
             return false;
         }
         throw new NotFoundException("User not found");
@@ -325,9 +329,9 @@ public final class Service {
 
     private void validateStatus(WorkItemDto workItem) {
         if (workItem.getWorkItemStatus() != null) {
-            Optional.ofNullable(workItem.getWorkItemStatus()).filter(status -> status.toUpperCase().equals("DONE")
-                    || status.toUpperCase().equals("UNSTARTED")
-                    || status.toUpperCase().equals("STARTED"))
+            Optional.ofNullable(workItem.getWorkItemStatus())
+                    .filter(status -> status.toUpperCase().equals("DONE") || status.toUpperCase().equals("UNSTARTED") ||
+                                      status.toUpperCase().equals("STARTED"))
                     .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
         }
     }

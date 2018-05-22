@@ -68,6 +68,7 @@ public final class UserResource {
     }
 
     private URI locationOf(User user) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getUserNumber().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(user.getUserNumber().toString()).build();
     }
 }

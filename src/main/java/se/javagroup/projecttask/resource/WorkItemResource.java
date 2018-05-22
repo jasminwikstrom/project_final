@@ -60,6 +60,7 @@ public final class WorkItemResource {
     }
 
     private URI locationOf(WorkItem workItem) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(workItem.getId().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(workItem.getId().toString()).build();
     }
 }

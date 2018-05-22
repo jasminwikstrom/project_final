@@ -52,6 +52,7 @@ public final class IssueResource {
     }
 
     private URI locationOf(Issue issue) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(issue.getId().toString()).build();
     }
 }

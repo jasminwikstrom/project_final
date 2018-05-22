@@ -30,7 +30,8 @@ public class User {
     protected User() {
     }
 
-    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status, Team team) {
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status,
+                Team team) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
