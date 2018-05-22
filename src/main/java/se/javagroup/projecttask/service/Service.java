@@ -57,15 +57,17 @@ public final class Service {
         throw new NotFoundException("User not found");
     }
 
-    public void updateUser(Long userNumber, User user) {
-        User foundUser = userRepository.findByUserNumber(userNumber)
-                .orElseThrow(() -> new BadInputException("User with usernumber " + user.getUserNumber() + " was not found"));
+    public User updateUser(Long userNumber, User user) {
+        User foundUser = userRepository.findByUserNumber(userNumber).get();
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setUsername(user.getUsername());
-        foundUser.setStatus(user.getStatus());
-
-        userRepository.save(foundUser);
+        foundUser.setStatus(user.isStatus());
+        if(!foundUser.isStatus()){
+            Collection<WorkItem> foundWorkItems = workItemRepository.findWorkItemsByUserId(foundUser.getId());
+            foundWorkItems.forEach(w -> workItemRepository.save(new WorkItem(w.getId(), w.getDescription(), WorkItemStatus.UNSTARTED)));
+        }
+        return userRepository.save(foundUser);
     }
 
     public void deleteUser(Long userNumber) {
