@@ -9,8 +9,6 @@ import se.javagroup.projecttask.repository.data.*;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.NotFoundException;
-import se.javagroup.projecttask.service.exception.TeamNotFoundException;
-import se.javagroup.projecttask.service.exception.WorkItemNotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
