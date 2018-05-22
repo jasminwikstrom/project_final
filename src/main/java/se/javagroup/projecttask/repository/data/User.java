@@ -40,6 +40,15 @@ public class User {
         this.userNumber = userNumber;
     }
 
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.userNumber = userNumber;
+        this.status = status;
+    }
+
     public User(String firstName, String lastName, String username) {
         this.firstName = firstName;
         this.lastName = lastName;

@@ -38,9 +38,7 @@ public final class TeamResource {
     @Path("{teamId}")
     public Response getTeam(@PathParam("teamId") Long teamId) {
         //return service.getTeam(teamId).map(Response::ok).orElse(Response.status(Response.Status.NOT_FOUND)).build();
-
         return Response.ok(service.getTeam(teamId)).build();
-
     }
 
     @PUT

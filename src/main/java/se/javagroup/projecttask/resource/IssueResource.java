@@ -38,7 +38,7 @@ public final class IssueResource {
     @GET
     @Path("{issueId}")
     public Response getIssue(@PathParam("issueId") Long issueId) {
-        return service.getIssue(issueId).map(Response::ok).orElse(Response.status(NOT_FOUND)).build();
+        return Response.ok(service.getIssue(issueId)).build();
     }
 
     @PUT
@@ -51,9 +51,8 @@ public final class IssueResource {
     @DELETE
     @Path("{issueId}")
     public Response deleteIssue(@PathParam("issueId") Long issueId) {
-        Optional<Issue> issue = service.getIssue(issueId);
-        issue.ifPresent(i -> service.deleteIssue(i));
-        return issue.map(i -> Response.status(NO_CONTENT)).orElse(Response.status(NOT_FOUND)).build();
+        service.deleteIssue(issueId);
+        return Response.noContent().build();
     }
 
     private URI locationOf(Issue issue) {
