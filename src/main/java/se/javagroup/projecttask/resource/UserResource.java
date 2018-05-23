@@ -11,9 +11,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
-
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 
 @Path("/users")
@@ -22,7 +19,6 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 @Produces(MediaType.APPLICATION_JSON)
 public final class UserResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 
@@ -40,7 +36,6 @@ public final class UserResource {
     public Response getAllWorkItemsForUser(@PathParam("userNumber") Long userNumber) {
         return Response.ok(service.getAllWorkItemsForUser(userNumber)).build();
     }
-
 
     @GET
     @Path("{userNumber}")
@@ -73,6 +68,7 @@ public final class UserResource {
     }
 
     private URI locationOf(User user) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(user.getUserNumber().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(user.getUserNumber().toString()).build();
     }
 }

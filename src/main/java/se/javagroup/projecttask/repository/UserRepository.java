@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-
     @Query(value =
             "SELECT * FROM USER u " +
                     "LEFT JOIN TEAM t on t.id=u.team_id " +
@@ -26,5 +25,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
                               @Param("usernumber") String userNumber);
 
     Optional<User> findByUserNumber(Long userNumber);
-
 }

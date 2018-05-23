@@ -27,9 +27,11 @@ public class User {
     @JsonManagedReference
     private Collection<WorkItem> workitems;
 
-    protected User() {}
+    protected User() {
+    }
 
-    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status, Team team) {
+    public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status,
+                Team team) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -61,10 +63,6 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -81,10 +79,13 @@ public class User {
         this.lastName = lastName;
     }
 
+<<<<<<< HEAD
     public void setStatus(Boolean status) {
         this.status = status;
     }
 
+=======
+>>>>>>> master
     public String getUsername() {
         return username;
     }
@@ -105,6 +106,13 @@ public class User {
         return status;
     }
 
+<<<<<<< HEAD
+=======
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+>>>>>>> master
     public Collection<WorkItem> getWorkitems() {
         return workitems;
     }

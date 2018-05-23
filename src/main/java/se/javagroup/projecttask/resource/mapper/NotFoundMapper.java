@@ -10,7 +10,7 @@ import java.util.Collections;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Provider
-public final class NotFoundMapper implements ExceptionMapper<NotFoundException>{
+public final class NotFoundMapper implements ExceptionMapper<NotFoundException> {
     @Override
     public Response toResponse(NotFoundException e) {
         return Response.status(NOT_FOUND).entity(Collections.singletonMap("error", e.getMessage())).build();

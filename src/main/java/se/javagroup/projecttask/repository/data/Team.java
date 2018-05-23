@@ -16,7 +16,8 @@ public class Team {
     @JsonManagedReference
     private Collection<User> users;
 
-    protected Team() {}
+    protected Team() {
+    }
 
     public Team(String name, boolean status) {
         this.name = name;
@@ -25,14 +26,6 @@ public class Team {
 
     public Long getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public boolean isStatus() {
-        return status;
     }
 
     public Collection<User> getUsers() {

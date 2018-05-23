@@ -12,16 +12,12 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Optional;
 
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.NO_CONTENT;
-
 @Path("issues")
 @Component
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public final class IssueResource {
     private final Service service;
-
     @Context
     private UriInfo uriInfo;
 
@@ -56,6 +52,7 @@ public final class IssueResource {
     }
 
     private URI locationOf(Issue issue) {
-        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString()).segment(issue.getId().toString()).build();
+        return uriInfo.getBaseUriBuilder().path(uriInfo.getPathSegments().get(0).toString())
+                .segment(issue.getId().toString()).build();
     }
 }
