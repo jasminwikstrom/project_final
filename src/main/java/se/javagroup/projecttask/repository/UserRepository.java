@@ -1,6 +1,7 @@
 //Repository
 package se.javagroup.projecttask.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,11 +19,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     "(:username is null or u.username = :username) AND " +
                     "(:usernumber is null or u.user_number = :usernumber) AND " +
                     "(:teamname is null or t.name = :teamname)", nativeQuery = true)
+
     List<User> findAllByQuery(@Param("firstname") String firstName,
                               @Param("lastname") String lastName,
                               @Param("username") String username,
                               @Param("teamname") String teamname,
-                              @Param("usernumber") String userNumber);
+                              @Param("usernumber") String userNumber,
+                              Pageable pageable);
 
     Optional<User> findByUserNumber(Long userNumber);
 }

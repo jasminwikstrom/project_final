@@ -2,6 +2,7 @@ package se.javagroup.projecttask.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -11,6 +12,7 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
+
     @Column(nullable = false)
     private String firstName;
     @Column(nullable = false)
@@ -40,6 +42,7 @@ public class User {
         this.status = status;
         this.team = team;
         this.userNumber = userNumber;
+
     }
 
     public User(Long id, String firstName, String lastName, String username, Long userNumber, boolean status) {
@@ -104,4 +107,6 @@ public class User {
     public Collection<WorkItem> getWorkitems() {
         return workitems;
     }
+
+
 }
