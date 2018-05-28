@@ -1,5 +1,7 @@
 package se.javagroup.projecttask.service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.IssueRepository;
 import se.javagroup.projecttask.repository.TeamRepository;
@@ -33,20 +35,27 @@ public final class Service {
         validateUsernameLength(user.getUsername());
         Long usernumber = randomizedUserNumber();
         boolean numberexists = checkUserNumber(usernumber);
-        if (numberexists == true) {
+        if (numberexists) {
             usernumber = randomizedUserNumber();
             numberexists = checkUserNumber(usernumber);
             user.setUserNumber(usernumber);
         }
-        if (numberexists == false) {
+        if (!numberexists) {
             user.setUserNumber(usernumber);
         }
         return userRepository.save(user);
     }
 
+
     public List<User> getAllUsers(String firstName, String lastName, String username, String teamName,
-                                  String userNumber) {
-        return userRepository.findAllByQuery(firstName, lastName, username, teamName, userNumber);
+                                  String userNumber, String page, String limit) {
+
+        Pageable pageable = null;
+        if (page != null && limit != null) {
+            pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(limit));
+        }
+
+        return userRepository.findAllByQuery(firstName, lastName, username, teamName, userNumber, pageable);
     }
 
     public User getUserByUserNumber(Long userNumber) {
@@ -104,7 +113,7 @@ public final class Service {
         if (status != null) {
 
             workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status))
-                                 .collect(Collectors.toList());
+                    .collect(Collectors.toList());
         }
         if (text != null) {
             workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
@@ -150,19 +159,19 @@ public final class Service {
             validateWorkItemSize(user);
             if (workItemNew == null) {
                 return workItemRepository.save(new WorkItem(workItem.getId(), workItem.getDescription(),
-                                                            workItem.getWorkItemStatus(), user));
+                        workItem.getWorkItemStatus(), user));
             }
             validateStatus(workItemNew);
             return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(),
-                                                        WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()), user));
+                    WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()), user));
         }
         if (workItemNew == null) {
             return workItem;
         }
         validateStatus(workItemNew);
         return workItemRepository.save(new WorkItem(workItem.getId(), workItemNew.getDescription(),
-                                                    WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
-                                                    workItem.getUser()));
+                WorkItemStatus.valueOf(workItemNew.getWorkItemStatus()),
+                workItem.getUser()));
     }
 
     public void deleteWorkItem(Long workItemId) {
@@ -210,7 +219,7 @@ public final class Service {
         }
         User user = userOptional.get();
         return userRepository.save(new User(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
-                                            user.getUserNumber(), user.isStatus(), teamOptional.get()));
+                user.getUserNumber(), user.isStatus(), teamOptional.get()));
     }
 
     public void deleteTeam(Long teamId) {
@@ -220,7 +229,7 @@ public final class Service {
         }
         for (User u : team.get().getUsers()) {
             userRepository.save(new User(u.getId(), u.getFirstName(), u.getLastName(), u.getUsername(),
-                                         u.getUserNumber(), u.isStatus(), null));
+                    u.getUserNumber(), u.isStatus(), null));
         }
         teamRepository.delete(team.get());
     }
@@ -231,9 +240,9 @@ public final class Service {
             WorkItem oldWorkItem = foundWorkItem.get();
             if (oldWorkItem.getWorkItemStatus().toString().equals("DONE")) {
                 Optional<Issue> newIssue = Optional.of(issueRepository.save(new Issue(issue.getDescription(),
-                                                                                      issue.getWorkItem())));
+                        issue.getWorkItem())));
                 workItemRepository.save(new WorkItem(oldWorkItem.getId(), oldWorkItem.getDescription(),
-                                                     WorkItemStatus.UNSTARTED));
+                        WorkItemStatus.UNSTARTED));
                 return newIssue;
             }
         }
@@ -331,7 +340,7 @@ public final class Service {
         if (workItem.getWorkItemStatus() != null) {
             Optional.ofNullable(workItem.getWorkItemStatus())
                     .filter(status -> status.toUpperCase().equals("DONE") || status.toUpperCase().equals("UNSTARTED") ||
-                                      status.toUpperCase().equals("STARTED"))
+                            status.toUpperCase().equals("STARTED"))
                     .orElseThrow(() -> new BadInputException(workItem.getWorkItemStatus() + " - Wrong status type"));
         }
     }

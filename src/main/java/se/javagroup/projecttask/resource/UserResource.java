@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.User;
+import se.javagroup.projecttask.resource.verification.Secured;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -26,6 +27,7 @@ public final class UserResource {
         this.service = service;
     }
 
+
     @POST
     public Response addUser(User user) {
         return Response.created(locationOf(service.createUser(user))).build();
@@ -38,6 +40,7 @@ public final class UserResource {
     }
 
     @GET
+    @Secured
     @Path("{userNumber}")
     public Response getUserByUserNumber(@PathParam("userNumber") Long userNumber) {
         return Response.ok(service.getUserByUserNumber(userNumber)).build();
@@ -56,8 +59,11 @@ public final class UserResource {
             @QueryParam("lastname") String lastName,
             @QueryParam("username") String userName,
             @QueryParam("usernumber") String userNumber,
-            @QueryParam("teamname") String teamName) {
-        return service.getAllUsers(firstName, lastName, userName, teamName, userNumber);
+            @QueryParam("teamname") String teamName,
+            @QueryParam("page") String page,
+            @QueryParam("limit") String limit) {
+
+        return service.getAllUsers(firstName, lastName, userName, teamName, userNumber, page, limit);
     }
 
     @DELETE
