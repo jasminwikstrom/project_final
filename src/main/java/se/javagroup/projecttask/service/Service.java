@@ -12,8 +12,9 @@ import se.javagroup.projecttask.resource.dto.WorkItemDto;
 import se.javagroup.projecttask.service.exception.BadInputException;
 import se.javagroup.projecttask.service.exception.NotFoundException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public final class Service {
@@ -98,27 +99,38 @@ public final class Service {
             return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus.UNSTARTED));
         }
         validateStatus(workItem);
-        return workItemRepository.save(new WorkItem(null, workItem.getDescription(), WorkItemStatus
-                .valueOf(workItem.getWorkItemStatus().toUpperCase())));
+
+        WorkItem workItemEntity = new WorkItem(null, workItem.getDescription(), WorkItemStatus
+                .valueOf(workItem.getWorkItemStatus().toUpperCase()));
+
+        return workItemRepository.save(workItemEntity);
     }
 
-    public List<WorkItem> getAllWorkItems(String status, boolean issue, String text) {
-        List<WorkItem> workItems = workItemRepository.findAll();
-        if (status == null && !issue && text == null) {
-            return workItems;
-        }
-        if (issue) {
-            workItems = workItems.stream().filter(w -> w.getIssue() != null).collect(Collectors.toList());
-        }
-        if (status != null) {
+    public List<WorkItem> getAllWorkItems(String status, boolean issue, String text, String user, String from, String to, String page, String limit) {
 
-            workItems = workItems.stream().filter(w -> w.getWorkItemStatus().toString().equalsIgnoreCase(status))
-                    .collect(Collectors.toList());
+        Pageable pageable = null;
+        if (page != null && limit != null) {
+            pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(limit));
         }
-        if (text != null) {
-            workItems = workItems.stream().filter(w -> w.getDescription().contains(text)).collect(Collectors.toList());
+
+        Boolean issueBool = null;
+        if (issue) {
+            issueBool = true;
         }
-        return workItems;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        LocalDate fromDate = null;
+        if (from != null) {
+            fromDate = LocalDate.parse(from, formatter);
+        }
+
+        LocalDate toDate = null;
+        if (to != null) {
+            toDate = LocalDate.parse(to, formatter);
+        }
+
+        return workItemRepository.findAllWorkItemsByQuery(status, issueBool, text, user, fromDate, toDate, pageable);
     }
 
     public Collection<WorkItem> getAllWorkItemsForUser(Long userNumber) {

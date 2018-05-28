@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Issue;
+import se.javagroup.projecttask.resource.verification.Secured;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -26,6 +27,7 @@ public final class IssueResource {
     }
 
     @POST
+    @Secured
     public Response createIssue(Issue issue) {
         Optional<Issue> newIssue = service.createIssue(issue, issue.getWorkItem().getId());
         return Response.created(locationOf(newIssue.get())).build();
@@ -38,6 +40,7 @@ public final class IssueResource {
     }
 
     @PUT
+    @Secured
     @Path("{issueId}")
     public Response updateIssue(@PathParam("issueId") Long issueId, Issue issue) {
         service.updateIssue(issueId, issue);

@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 public class WorkItem {
     @Id
     @GeneratedValue
     private Long id;
+    @Column
+    LocalDate date;
     @Column(nullable = false)
     private String description;
     @Enumerated(EnumType.STRING)
@@ -29,6 +33,7 @@ public class WorkItem {
         this.id = id;
         this.description = description;
         this.workItemStatus = workItemStatus;
+        this.date = LocalDate.now();
     }
 
     public WorkItem(Long id, String description, WorkItemStatus workItemStatus, User user) {
@@ -36,6 +41,7 @@ public class WorkItem {
         this.description = description;
         this.workItemStatus = workItemStatus;
         this.user = user;
+        this.date = LocalDate.now();
     }
 
     public Long getId() {

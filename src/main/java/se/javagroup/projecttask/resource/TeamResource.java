@@ -2,6 +2,7 @@ package se.javagroup.projecttask.resource;
 
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.Team;
+import se.javagroup.projecttask.resource.verification.Secured;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -25,6 +26,7 @@ public final class TeamResource {
     }
 
     @POST
+    @Secured
     public Response createTeam(Team team) {
         return Response.created(locationOf(service.createTeam(team))).build();
     }
@@ -36,6 +38,7 @@ public final class TeamResource {
     }
 
     @PUT
+    @Secured
     @Path("{teamId}")
     public Response updateTeam(@PathParam("teamId") Long teamId, Team team) {
         service.updateTeam(teamId, team);
@@ -43,6 +46,7 @@ public final class TeamResource {
     }
 
     @PUT
+    @Secured
     @Path("{teamId}/{userNumber}")
     public Response addUserToTeam(@PathParam("teamId") Long teamId, @PathParam("userNumber") Long userNumber) {
         service.addUserToTeam(teamId, userNumber);
