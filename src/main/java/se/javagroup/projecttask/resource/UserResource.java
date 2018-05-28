@@ -29,6 +29,7 @@ public final class UserResource {
 
 
     @POST
+    @Secured
     public Response addUser(User user) {
         return Response.created(locationOf(service.createUser(user))).build();
     }
@@ -47,6 +48,7 @@ public final class UserResource {
     }
 
     @PUT
+    @Secured
     @Path("{userNumber}")
     public Response updateUser(@PathParam("userNumber") Long userNumber, User user) {
         service.updateUser(userNumber, user);

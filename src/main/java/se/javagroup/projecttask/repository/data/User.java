@@ -2,7 +2,7 @@ package se.javagroup.projecttask.repository.data;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.springframework.data.domain.Page;
+
 
 import javax.persistence.*;
 import java.util.Collection;

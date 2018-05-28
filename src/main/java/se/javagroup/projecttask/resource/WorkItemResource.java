@@ -11,6 +11,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Path("workitems")
 @Component
@@ -26,7 +30,7 @@ public final class WorkItemResource {
     }
 
     @POST
-    public Response createUser(WorkItemDto workItem) {
+    public Response createWorkItem(WorkItemDto workItem ) {
         WorkItem workItemNew = service.createWorkItem(workItem);
         return Response.created(locationOf(workItemNew)).build();
     }
@@ -40,8 +44,22 @@ public final class WorkItemResource {
     @GET
     public Response getAllWorkItems(@QueryParam("status") String status,
                                     @QueryParam("issue") @DefaultValue("false") boolean issue,
-                                    @QueryParam("text") String text) {
-        return Response.ok(service.getAllWorkItems(status, issue, text)).build();
+                                    @QueryParam("text") String text,
+                                    @QueryParam("user") String user,
+                                    @QueryParam("from") String from,
+                                    @QueryParam("to") String to,
+                                    @QueryParam("page") String page,
+                                    @QueryParam("limit") String limit) {
+        return Response.ok(service.getAllWorkItems(
+                status,
+                issue,
+                text,
+                user,
+                from,
+                to,
+                page,
+                limit)
+        ).build();
     }
 
     @PUT
