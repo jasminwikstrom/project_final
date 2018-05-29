@@ -41,7 +41,6 @@ public final class UserResource {
     }
 
     @GET
-    @Secured
     @Path("{userNumber}")
     public Response getUserByUserNumber(@PathParam("userNumber") Long userNumber) {
         return Response.ok(service.getUserByUserNumber(userNumber)).build();

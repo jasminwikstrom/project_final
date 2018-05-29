@@ -3,6 +3,7 @@ package se.javagroup.projecttask.resource;
 import org.springframework.stereotype.Component;
 import se.javagroup.projecttask.repository.data.WorkItem;
 import se.javagroup.projecttask.resource.dto.WorkItemDto;
+import se.javagroup.projecttask.resource.verification.Secured;
 import se.javagroup.projecttask.service.Service;
 
 import javax.ws.rs.*;
@@ -30,6 +31,7 @@ public final class WorkItemResource {
     }
 
     @POST
+    @Secured
     public Response createWorkItem(WorkItemDto workItem ) {
         WorkItem workItemNew = service.createWorkItem(workItem);
         return Response.created(locationOf(workItemNew)).build();
@@ -63,6 +65,7 @@ public final class WorkItemResource {
     }
 
     @PUT
+    @Secured
     @Path("{workItemId}")
     public Response updateWorkItem(@PathParam("workItemId") Long workItemId, WorkItemDto workItem,
                                    @QueryParam("user") @DefaultValue("0") Long userNumber) {

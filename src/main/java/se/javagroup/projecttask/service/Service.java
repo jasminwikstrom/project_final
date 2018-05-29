@@ -15,6 +15,7 @@ import se.javagroup.projecttask.service.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public final class Service {
@@ -247,6 +248,17 @@ public final class Service {
     }
 
     public Optional<Issue> createIssue(Issue issue, Long workItemId) {
+
+        List<Long> ids = issueRepository.findAll().stream()
+                .map(Issue::getWorkItem)
+                .map(WorkItem::getId)
+                .filter(id -> id.toString().equals(workItemId.toString()))
+                .collect(Collectors.toList());
+
+        if (!ids.isEmpty()) {
+            throw new IllegalArgumentException("workitem already assigned to another issue");
+        }
+
         Optional<WorkItem> foundWorkItem = workItemRepository.findById(workItemId);
         if (foundWorkItem.isPresent()) {
             WorkItem oldWorkItem = foundWorkItem.get();
